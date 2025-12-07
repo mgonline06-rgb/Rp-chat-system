@@ -72,22 +72,27 @@ input, button {
   background-color: #f0d27a;
 }
 /* -------------------------------------------------------
-   FANTASY CHARACTER SHEET (Spellbook style)
+   FANTASY CHARACTER SHEET (Spellbook Theme)
 ------------------------------------------------------- */
 
 .profileWindow {
   position: fixed;
   top: 60px;
   right: 25px;
-  width: 340px;
-  background: url("https://i.imgur.com/fX9OZ3X.png"); /* parchment texture */
+  width: 360px;
+
+  /* FIXED parchment texture */
+  background: url("https://i.imgur.com/8Q0lXEk.jpeg");
   background-size: cover;
+
   border: 3px solid #d4af37;
   border-radius: 12px;
   padding: 18px;
   z-index: 9999;
-  box-shadow: 0 0 20px #d4af37, inset 0 0 10px #000;
+
+  box-shadow: 0 0 25px #d4af37, inset 0 0 12px #000;
   animation: popIn 0.25s ease-out;
+
   font-family: "Cinzel", serif;
   color: #2b1b00;
 }
@@ -100,6 +105,66 @@ input, button {
 .profileHeader {
   display: flex;
   align-items: center;
-  margin-bott
+  margin-bottom: 15px;
+  border-bottom: 2px solid #d4af37;
+  padding-bottom: 10px;
+}
 
+.profileHeader img {
+  width: 70px;
+  height: 70px;
+  border-radius: 10px;
+  margin-right: 12px;
+  border: 2px solid #d4af37;
+  box-shadow: 0 0 10px #d4af37;
+}
 
+.profileWindow p {
+  background: rgba(255, 250, 230, 0.8);
+  border: 1px solid #d4af37;
+  border-radius: 6px;
+  padding: 7px;
+  margin-bottom: 10px;
+}
+
+.profileWindow h4 {
+  margin-top: 15px;
+  font-size: 18px;
+  color: #4a2d00;
+  text-shadow: 0 0 4px #d4af37;
+}
+
+.profileMessages {
+  max-height: 220px;
+  overflow-y: auto;
+
+  background: rgba(255, 250, 230, 0.75);
+  padding: 10px;
+
+  border-radius: 8px;
+  border: 1px solid #d4af37;
+  box-shadow: inset 0 0 10px #d4af37;
+}
+
+/* FIXED close button */
+.closeProfile {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+
+  background: #8b0000;
+  color: #ffe0e0;
+  border: 2px solid #d4af37;
+
+  padding: 4px 10px;
+  border-radius: 6px;
+
+  cursor: pointer;
+  font-size: 16px;
+  transition: 0.2s;
+}
+
+.closeProfile:hover {
+  background: #b30000;
+  transform: scale(1.15);
+}
