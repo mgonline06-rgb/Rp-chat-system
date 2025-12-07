@@ -1,16 +1,20 @@
 body {
-  font-family: Arial, sans-serif;
-  background-color: #f0f0f0;
+  font-family: 'Cinzel', serif; /* Classic fantasy font */
+  background: url('https://i.imgur.com/J0y7qI6.jpg') no-repeat center center fixed; /* fantasy parchment background */
+  background-size: cover;
   margin: 0;
   padding: 20px;
+  color: #fff8dc; /* parchment-like text */
 }
 
 #login, #chat {
-  max-width: 500px;
+  max-width: 600px;
   margin: auto;
-  background: white;
+  background: rgba(34, 34, 34, 0.85);
   padding: 20px;
-  border-radius: 10px;
+  border: 2px solid #d4af37; /* gold border */
+  border-radius: 15px;
+  box-shadow: 0 0 15px #d4af37;
 }
 
 input, button {
@@ -18,20 +22,28 @@ input, button {
   margin: 5px 0;
   width: 100%;
   box-sizing: border-box;
+  border-radius: 8px;
+  border: 1px solid #d4af37;
+  background-color: #2c2c2c;
+  color: #fff8dc;
+  font-family: inherit;
 }
 
 #messages {
-  height: 300px;
+  height: 350px;
   overflow-y: scroll;
-  border: 1px solid #ccc;
+  border: 1px solid #d4af37;
   padding: 10px;
   margin-bottom: 10px;
+  background: rgba(0,0,0,0.4);
 }
 
 .message {
   display: flex;
   align-items: center;
   margin-bottom: 8px;
+  padding: 5px;
+  border-radius: 5px;
 }
 
 .message img {
@@ -39,6 +51,28 @@ input, button {
   width: 40px;
   height: 40px;
   margin-right: 10px;
+  border: 1px solid #d4af37;
 }
+
+#roomHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#copyRoomBtn {
+  background-color: #d4af37;
+  color: #2c2c2c;
+  font-weight: bold;
+  width: auto;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 8px;
+}
+#copyRoomBtn:hover {
+  background-color: #f0d27a;
+}
+
+
 
 
