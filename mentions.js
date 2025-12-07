@@ -1,28 +1,19 @@
 // -------------------------------------------------------
-// MENTION HIGHLIGHT + SHIFT-CLICK @MENTION SYSTEM
+// Mention Highlight + Shift-Click @Mention System
 // -------------------------------------------------------
 
-export function handleMentions(msgEl, user, text, currentUsername, messageInput) {
+export function handleMentions(msgEl, user, text, currentUser, messageInput) {
 
-  // -------------------------------------------------------
-  // HIGHLIGHT IF CURRENT USER IS MENTIONED
-  // -------------------------------------------------------
-  if (!currentUsername) return;
-
-  const lowerText = text.toLowerCase();
-  const lowerUser = currentUsername.toLowerCase();
-
-  if (lowerText.includes("@" + lowerUser)) {
+  // Highlight if message contains @you
+  if (currentUser && text.toLowerCase().includes("@" + currentUser.toLowerCase())) {
     msgEl.classList.add("mentionHighlight");
   }
 
-  // -------------------------------------------------------
-  // SHIFT-CLICK → INSERT @USERNAME INTO MESSAGE BOX
-  // -------------------------------------------------------
-  msgEl.addEventListener("click", (event) => {
-    if (!event.shiftKey) return;
-
-    messageInput.value = "@" + user + " ";
-    messageInput.focus();
+  // SHIFT-click → insert @mention
+  msgEl.addEventListener("click", e => {
+    if (e.shiftKey) {
+      messageInput.value = "@" + user + " ";
+      messageInput.focus();
+    }
   });
 }
