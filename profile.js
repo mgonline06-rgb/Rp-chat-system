@@ -1,5 +1,5 @@
 // -------------------------------------------------------
-// FANTASY CHARACTER SHEET POPUP
+// FANTASY CHARACTER SHEET POPUP (FULL + FIXED)
 // -------------------------------------------------------
 
 export function openCharacterSheetFromChat(player) {
@@ -17,7 +17,7 @@ function openCharacterSheet(user, avatar, rpName, bio) {
       <img src="${avatar}">
       <div>
         <b style="font-size:18px;">${rpName}</b><br>
-        <small style="color:#4a2d00;">@${user}</small>
+        <small>@${user}</small>
       </div>
     </div>
 
@@ -56,4 +56,3 @@ function loadUserMessageHistory(targetUser, containerId) {
     }
   });
 }
-
