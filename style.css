@@ -1,377 +1,312 @@
-/* ===============================
-   GLOBAL
-   =============================== */
-
-* {
-  box-sizing: border-box;
-}
+/* ==== GLOBAL PAGE / BOOK-THEME BACKGROUND ==== */
 
 body {
   margin: 0;
   padding: 20px;
   font-family: "Cinzel", "Georgia", serif;
-
-  /* Book / parchment vibe background */
-  background: #1b1410 url("parchment.jpg") center/cover fixed no-repeat;
-  color: #2b1a0f;
+  background: radial-gradient(circle at top, #3b2a6a, #120b24);
+  color: #fdf5e6;
 }
 
-/* Slight dark overlay to keep center readable */
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  background: radial-gradient(circle at center, rgba(0,0,0,0.1), rgba(0,0,0,0.6));
-  z-index: -1;
-}
+/* If you later add a custom image named book-bg.jpg to your repo,
+   uncomment this and it will be used:
 
-/* Center the main content vertically a bit */
+body {
+  background: #120b24 url("book-bg.jpg") no-repeat center center fixed;
+  background-size: cover;
+}
+*/
+
+/* ==== SHARED PANEL STYLING (BOOK / SCROLL LOOK) ==== */
+
 #login,
 #chat {
   max-width: 700px;
-  margin: 40px auto;
-}
-
-/* ===============================
-   LOGIN – LIKE FRONT OF A BOOK
-   =============================== */
-
-#login {
-  background: linear-gradient(135deg, #3c2414, #6b3f26);
+  margin: 30px auto;
+  padding: 20px 25px;
   border-radius: 16px;
-  padding: 24px;
-  border: 3px solid #d4af37;
-  box-shadow: 0 0 25px rgba(0,0,0,0.8);
+  border: 3px solid #d4af37;          /* gold edge */
+  box-shadow: 0 0 18px rgba(0, 0, 0, 0.8);
+  background: #3a2c1a;                 /* dark leather behind “pages” */
   position: relative;
 }
 
-/* Subtle “book spine” effect on the left */
-#login::before {
+/* inner page effect */
+#login::before,
+#chat::before {
   content: "";
   position: absolute;
-  left: -10px;
-  top: 10px;
-  bottom: 10px;
-  width: 12px;
-  background: linear-gradient(to right, #20120a, #4b2b18);
-  border-radius: 8px 0 0 8px;
-  box-shadow: 4px 0 10px rgba(0,0,0,0.6);
+  inset: 10px;
+  border-radius: 10px;
+  background: #f5e4c3;                 /* parchment color */
+  box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.4);
+  z-index: 0;
 }
+
+#login > *,
+#chat > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ==== LOGIN = “BOOK COVER” VIBE ==== */
 
 #login h2 {
   text-align: center;
-  margin-top: 0;
   margin-bottom: 16px;
-  color: #f8e6b0;
-  letter-spacing: 1px;
+  color: #3b2212;
+  text-shadow: 0 0 4px #f5e4c3;
 }
 
-/* Inputs & buttons on login */
-#login input,
-#login button {
-  width: 100%;
+/* ==== INPUTS & BUTTONS ==== */
+
+input,
+button {
   padding: 10px;
-  margin: 6px 0;
+  margin: 5px 0;
+  width: 100%;
+  box-sizing: border-box;
   border-radius: 8px;
-  border: 1px solid #d4af37;
+  border: 1px solid #8b6b3f;
   font-family: inherit;
+  font-size: 14px;
 }
 
-#login input {
-  background: rgba(0,0,0,0.35);
-  color: #fceecb;
+input {
+  background-color: #fdf6e3;
+  color: #3b2212;
 }
 
-#login input::placeholder {
-  color: #d3c2a0;
+input::placeholder {
+  color: #8b6b3f;
 }
 
-#login button {
-  background: #d4af37;
-  color: #2b1a0f;
+button {
+  background: linear-gradient(#d4af37, #9c7c24);
+  color: #2c1b0f;
   font-weight: bold;
   cursor: pointer;
-  transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.1s ease;
+  border: 1px solid #6b4a16;
 }
 
-#login button:hover {
-  background: #f0d27a;
-  box-shadow: 0 0 10px rgba(0,0,0,0.7);
-  transform: translateY(-1px);
+button:hover {
+  filter: brightness(1.07);
 }
 
-/* ===============================
-   CHAT PANEL
-   =============================== */
+/* ==== ROOM HEADER ==== */
 
-#chat {
-  background: rgba(38, 26, 16, 0.92);
-  border-radius: 16px;
-  padding: 20px;
-  border: 3px solid #d4af37;
-  box-shadow: 0 0 25px rgba(0,0,0,0.8);
-  color: #fceecb;
-}
-
-/* Header with room code + copy */
 #roomHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
 #roomHeader h2 {
   margin: 0;
-  font-size: 1.2rem;
+  color: #3b2212;
 }
 
-#roomHeader span#currentRoom {
-  color: #ffd966;
+#currentRoom {
   font-weight: bold;
 }
 
 #copyRoomBtn {
-  background: #d4af37;
-  color: #2b1a0f;
-  font-weight: bold;
-  border-radius: 8px;
-  border: 1px solid #8b6a1e;
-  padding: 5px 10px;
-  cursor: pointer;
-}
-#copyRoomBtn:hover {
-  background: #f0d27a;
+  width: auto;
+  padding: 6px 12px;
 }
 
-/* Chat area */
+/* ==== CHAT MESSAGES ==== */
+
 #messages {
-  height: 350px;
+  height: 340px;
   overflow-y: auto;
-  border: 1px solid #d4af37;
+  border-radius: 10px;
+  border: 1px solid #c49a4c;
   padding: 10px;
   margin-bottom: 10px;
-  background: rgba(0, 0, 0, 0.45);
+  background: #f9edd0;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
 }
-
-/* Chat input row */
-#messageInput {
-  width: 100%;
-  padding: 10px;
-  margin-top: 4px;
-  margin-bottom: 6px;
-  border-radius: 8px;
-  border: 1px solid #d4af37;
-  background: rgba(0, 0, 0, 0.4);
-  color: #fceecb;
-}
-
-#messageInput::placeholder {
-  color: #d3c2a0;
-}
-
-#sendBtn {
-  width: 100%;
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid #8b6a1e;
-  background: #d4af37;
-  color: #2b1a0f;
-  font-weight: bold;
-  cursor: pointer;
-}
-#sendBtn:hover {
-  background: #f0d27a;
-}
-
-/* ===============================
-   CHAT MESSAGES
-   =============================== */
 
 .message {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 8px;
-  margin-bottom: 6px;
-  padding: 4px 6px;
+  margin-bottom: 8px;
+  padding: 6px 8px;
   border-radius: 6px;
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.55);
+}
+
+/* System messages */
+.message.system {
+  background: rgba(212, 175, 55, 0.25);
+  font-style: italic;
 }
 
 .message img {
   border-radius: 50%;
-  width: 38px;
-  height: 38px;
-  border: 1px solid #d4af37;
+  width: 40px;
+  height: 40px;
+  border: 1px solid #c49a4c;
   object-fit: cover;
 }
 
 .message span {
-  font-size: 0.95rem;
+  color: #3b2212;
 }
 
-/* System messages can be styled differently if you add a class */
-.message.system {
-  font-style: italic;
-  opacity: 0.9;
+/* ==== INPUT ROW UNDER CHAT ==== */
+
+#messageInput {
+  margin-top: 5px;
 }
 
-/* Mention highlight (for @Name mentions) */
-.message.mentionHighlight {
-  background: rgba(255, 223, 128, 0.35);
-  border: 1px solid #f0d27a;
-}
-
-/* Make messages clickable for character sheets hint */
-.message:hover {
-  cursor: pointer;
-  background: rgba(255, 255, 255, 0.12);
-}
-
-/* ===============================
-   CHARACTER SHEET – BOOK / SCROLL
-   =============================== */
+/* ==== CHARACTER SHEET WINDOW (BOOK / SCROLL) ==== */
 
 .profileWindow {
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: min(800px, 95vw);
-  max-height: 90vh;
+  width: min(700px, 90vw);
+  max-height: 80vh;
+  background: #3a2c1a;
+  border: 3px solid #d4af37;
+  border-radius: 18px;
+  box-shadow: 0 0 24px rgba(0, 0, 0, 0.9);
+  z-index: 9999;
   display: flex;
   flex-direction: column;
-  background: #f5e2b8 url("parchment.jpg") center/cover no-repeat;
-  border-radius: 12px;
-  border: 3px solid #b68c3b;
-  box-shadow: 0 0 30px rgba(0,0,0,0.9);
-  padding: 0;
-  overflow: hidden;
-  z-index: 999;
 }
 
-/* Top + bottom scroll edges (if you want them) */
+.profileWindow::before {
+  content: "";
+  position: absolute;
+  inset: 12px;
+  border-radius: 12px;
+  background: #f5e4c3; /* parchment page */
+  box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.4);
+  z-index: 0;
+}
+
+.scrollContent,
 .scrollTop,
 .scrollBottom {
-  height: 20px;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.25), transparent);
+  position: relative;
+  z-index: 1;
 }
 
+.scrollTop,
 .scrollBottom {
-  background: linear-gradient(to top, rgba(0,0,0,0.25), transparent);
+  height: 18px;
+  background: radial-gradient(circle at center, #fdf2cf 0, #f5e4c3 40%, #c49a4c 100%);
 }
 
-/* Inside content area (scroll-like) */
+/* Inner scroll content area */
 .scrollContent {
-  padding: 16px 20px;
+  padding: 16px 24px;
   overflow-y: auto;
+}
+
+/* Close button */
+.closeProfile {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  z-index: 2;
+  background: #7b2b23;
+  color: #fcefe0;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
 }
 
 /* Header with avatar + name */
 .profileHeader {
   display: flex;
   align-items: center;
-  margin-bottom: 10px;
-  gap: 10px;
+  gap: 12px;
+  margin-bottom: 12px;
 }
 
 .profileHeader img {
   width: 64px;
   height: 64px;
   border-radius: 50%;
-  border: 2px solid #b68c3b;
   object-fit: cover;
+  border: 2px solid #c49a4c;
 }
 
-/* RP name input – make it readable with darker text */
+/* RP name input: dark brown text instead of white */
 .rpNameInput {
-  font-family: "Cinzel", "Georgia", serif;
-  font-size: 1.1rem;
-  font-weight: bold;
-  border: none;
-  border-bottom: 1px solid #8a6a33;
-  background: rgba(255, 255, 255, 0.65);
-  color: #3b2605;
+  width: 220px;
+  border-radius: 6px;
+  border: 1px solid #c49a4c;
+  background: #fdf6e3;
+  color: #3b2212;      /* ← makes the name readable */
   padding: 4px 6px;
-  width: 100%;
-}
-
-.rpNameInput:focus {
-  outline: none;
-  border-bottom: 1px solid #c28f2c;
+  font-size: 16px;
+  font-weight: bold;
+  font-family: "Cinzel", serif;
 }
 
 .profileHeader small {
   display: block;
-  color: #6b4b23;
+  color: #6b4a2b;
 }
 
-/* Bio label & textarea */
-label {
+/* Bio label and textarea */
+.scrollContent label {
   display: block;
-  margin-top: 10px;
+  margin-top: 8px;
   margin-bottom: 4px;
+  color: #3b2212;
   font-weight: bold;
-  color: #3b2605;
 }
 
 .bioInput {
   width: 100%;
   min-height: 80px;
   resize: vertical;
-  border-radius: 6px;
-  border: 1px solid #b68c3b;
+  border-radius: 8px;
+  border: 1px solid #c49a4c;
+  background: #fdf6e3;
+  color: #3b2212;
   padding: 6px;
-  background: rgba(255, 255, 255, 0.7);
-  color: #3b2605;
   font-family: "Georgia", serif;
-}
-
-.bioInput:focus {
-  outline: none;
-  border-color: #d19c35;
 }
 
 /* Save button */
 .saveProfile {
-  display: inline-block;
   margin-top: 8px;
-  padding: 6px 12px;
-  border-radius: 8px;
-  border: 1px solid #8b6a1e;
-  background: #d4af37;
-  color: #2b1a0f;
-  font-weight: bold;
-  cursor: pointer;
-}
-.saveProfile:hover {
-  background: #f0d27a;
+  width: auto;
+  padding: 6px 14px;
 }
 
-/* Message history area inside sheet */
+/* Message history section inside sheet */
 .profileMessages {
   margin-top: 8px;
   padding: 8px;
-  border-radius: 6px;
-  border: 1px solid #c29a4b;
-  background: rgba(255, 255, 255, 0.6);
+  border-radius: 8px;
+  border: 1px solid #c49a4c;
+  background: rgba(255, 255, 255, 0.5);
   max-height: 200px;
   overflow-y: auto;
-  color: #3b2605;
-  font-size: 0.9rem;
 }
 
-/* Close button (top right X) */
-.closeProfile {
-  position: absolute;
-  top: 6px;
-  right: 8px;
-  background: transparent;
-  border: none;
-  font-size: 1.1rem;
-  cursor: pointer;
-  color: #5a3a14;
+.profileMessages p {
+  margin: 4px 0;
+  color: #3b2212;
 }
-.closeProfile:hover {
-  color: #2b1a0f;
+
+/* Mention highlight (for future mentions.js) */
+.mentioned {
+  background: rgba(212, 175, 55, 0.5) !important;
+  box-shadow: 0 0 10px rgba(212, 175, 55, 0.9);
 }
+
