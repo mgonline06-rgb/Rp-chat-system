@@ -45,7 +45,7 @@ const currentRoomSpan = document.getElementById("currentRoom");
 const copyBtn = document.getElementById("copyRoomBtn");
 
 // -------------------------------------------------------
-// App State
+// Global State
 // -------------------------------------------------------
 let avatarURL = "";
 let username = "";
@@ -70,6 +70,7 @@ avatarInput.addEventListener("change", () => {
 // Join room (BOOK OPENS HERE)
 // -------------------------------------------------------
 joinBtn.addEventListener("click", () => {
+
   username = usernameInput.value.trim();
   const password = document.getElementById("password").value.trim();
 
@@ -78,7 +79,6 @@ joinBtn.addEventListener("click", () => {
 
   let inputRoom = roomInput.value.trim();
 
-  // Create new or join existing
   if (!inputRoom) {
     roomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
     alert("Room created! Share this code: " + roomCode);
@@ -87,24 +87,24 @@ joinBtn.addEventListener("click", () => {
   }
 
   currentRoomSpan.textContent = roomCode;
-
-  // Update global so profile.js can read correctly
   window.roomCode = roomCode;
 
-  // Swap login screen → book chat
+  // Switch screens
   loginDiv.style.display = "none";
   chatDiv.style.display = "block";
 
-  // Trigger book-opening animation
+  // Book opening animation
   chatDiv.classList.remove("closed");
-  setTimeout(() => chatDiv.classList.add("open"), 80);
+  setTimeout(() => {
+    chatDiv.classList.add("open");
+  }, 60);
 
   // Load messages
   messagesDiv.innerHTML = "";
+
   const messagesRef = ref(db, "rooms/" + roomCode + "/messages");
 
-  // Prevent multiple listeners
-  off(messagesRef);
+  off(messagesRef); // avoid duplicate listeners
 
   onChildAdded(messagesRef, snap => {
     const data = snap.val();
@@ -122,7 +122,7 @@ copyBtn.addEventListener("click", () =>
 );
 
 // -------------------------------------------------------
-// Send message
+// Send a message
 // -------------------------------------------------------
 sendBtn.addEventListener("click", () => {
   const msg = messageInput.value.trim();
@@ -135,13 +135,15 @@ sendBtn.addEventListener("click", () => {
   };
 
   push(ref(db, "rooms/" + roomCode + "/messages"), msgData);
+
   messageInput.value = "";
 });
 
 // -------------------------------------------------------
-// Add message to screen (supports profile popups & mentions)
+// Show a message in the chat
 // -------------------------------------------------------
 function addMessage(user, text, avatar) {
+
   const msgEl = document.createElement("div");
   msgEl.classList.add("message");
 
@@ -154,10 +156,20 @@ function addMessage(user, text, avatar) {
   msgEl.append(imgEl);
   msgEl.append(textEl);
 
-  // Click → character sheet
+  // Click → open character sheet
   msgEl.addEventListener("click", () => {
     openCharacterSheetFromChat({
-      user: user,
-      avatar: avatar,
+      user,
+      avatar,
       rpName: user,
-      bio: "N
+      bio: "No bio yet."
+    });
+  });
+
+  // Mentions (highlight + shift-click)
+  handleMentions(msgEl, user, text, username, messageInput);
+
+  messagesDiv.append(msgEl);
+  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
+
