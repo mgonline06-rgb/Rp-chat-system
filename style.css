@@ -72,22 +72,25 @@ input, button {
   background-color: #f0d27a;
 }
 /* -------------------------------------------------------
-   FANTASY CHARACTER SHEET (Spellbook Theme)
+   FANTASY CHARACTER SHEET (Spellbook Theme) — FIXED
 ------------------------------------------------------- */
 
 .profileWindow {
   position: fixed;
-  top: 60px;
-  right: 25px;
-  width: 360px;
+  
+  /* Center it horizontally relative to the chat */
+  top: 80px;
+  right: 80px;
 
-  /* FIXED parchment texture */
+  width: 320px;
+  min-height: 380px;
+
   background: url("https://i.imgur.com/8Q0lXEk.jpeg");
   background-size: cover;
 
   border: 3px solid #d4af37;
   border-radius: 12px;
-  padding: 18px;
+  padding: 20px;
   z-index: 9999;
 
   box-shadow: 0 0 25px #d4af37, inset 0 0 12px #000;
@@ -95,6 +98,9 @@ input, button {
 
   font-family: "Cinzel", serif;
   color: #2b1b00;
+
+  /* Prevent outside styles from stretching inside content */
+  box-sizing: border-box;
 }
 
 @keyframes popIn {
@@ -102,55 +108,14 @@ input, button {
   100% { transform: scale(1); opacity: 1; }
 }
 
-.profileHeader {
-  display: flex;
-  align-items: center;
-  margin-bottom: 15px;
-  border-bottom: 2px solid #d4af37;
-  padding-bottom: 10px;
-}
+/* ---------------------------------------------- */
+/* Close Button — FIXED width + alignment */
+/* ---------------------------------------------- */
 
-.profileHeader img {
-  width: 70px;
-  height: 70px;
-  border-radius: 10px;
-  margin-right: 12px;
-  border: 2px solid #d4af37;
-  box-shadow: 0 0 10px #d4af37;
-}
-
-.profileWindow p {
-  background: rgba(255, 250, 230, 0.8);
-  border: 1px solid #d4af37;
-  border-radius: 6px;
-  padding: 7px;
-  margin-bottom: 10px;
-}
-
-.profileWindow h4 {
-  margin-top: 15px;
-  font-size: 18px;
-  color: #4a2d00;
-  text-shadow: 0 0 4px #d4af37;
-}
-
-.profileMessages {
-  max-height: 220px;
-  overflow-y: auto;
-
-  background: rgba(255, 250, 230, 0.75);
-  padding: 10px;
-
-  border-radius: 8px;
-  border: 1px solid #d4af37;
-  box-shadow: inset 0 0 10px #d4af37;
-}
-
-/* FIXED close button */
 .closeProfile {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 8px;
+  right: 8px;
 
   background: #8b0000;
   color: #ffe0e0;
@@ -168,3 +133,25 @@ input, button {
   background: #b30000;
   transform: scale(1.15);
 }
+
+/* ---------------------------------------------- */
+/* Header section — FIXED layout */
+/* ---------------------------------------------- */
+
+.profileHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #d4af37;
+}
+
+.profileHeader img {
+  width: 60px;
+  height: 60px;
+  border-radius: 10px;
+
+  border: 2px
+
