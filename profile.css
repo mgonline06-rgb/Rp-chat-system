@@ -1,0 +1,138 @@
+/* -------------------------------------------------------
+   FANTASY CHARACTER SHEET WINDOW
+-------------------------------------------------------- */
+
+.profileWindow {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Main card */
+.profileCard {
+  background: #1a1133;
+  border: 2px solid rgba(255, 215, 120, 0.5);
+  box-shadow: 0 0 25px rgba(255, 215, 120, 0.35);
+  border-radius: 14px;
+  padding: 22px;
+  width: 520px;
+  max-height: 80vh;
+  overflow-y: auto;
+  color: #f8eccc;
+  font-family: "Cormorant Garamond", serif;
+  position: relative;
+}
+
+/* Close button */
+.closeProfile {
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  background: none;
+  border: none;
+  color: #d9b26b;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+/* Title */
+.profileTitle {
+  font-family: "Cinzel Decorative", serif;
+  font-size: 28px;
+  color: #f5dba0;
+  margin-bottom: 14px;
+}
+
+/* Header block */
+.profileHeader {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.profileAvatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #d5b06c;
+}
+
+.profileIdentity input {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 215, 120, 0.3);
+  color: #f8eccc;
+  padding: 6px 8px;
+  border-radius: 8px;
+  width: 180px;
+  font-size: 18px;
+}
+
+.profileUser {
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+/* Labels + Inputs */
+.sectionLabel,
+.sectionHeader {
+  font-family: "Cinzel Decorative";
+  margin-top: 12px;
+  margin-bottom: 6px;
+  color: #ffdca8;
+  letter-spacing: 1px;
+}
+
+.bioInput {
+  width: 100%;
+  min-height: 120px;
+  padding: 10px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 215, 120, 0.3);
+  color: #f8eccc;
+  resize: vertical;
+}
+
+/* Save button */
+.primary {
+  background: linear-gradient(to bottom, #f9d37a, #c79a43);
+  border: none;
+  color: #4a2f00;
+  padding: 8px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: "Cinzel Decorative";
+  font-size: 16px;
+  margin-top: 10px;
+}
+
+/* Message History Box */
+.profileMessages {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 215, 120, 0.25);
+  padding: 10px;
+  border-radius: 10px;
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.profileMessages p {
+  margin: 4px 0;
+  font-size: 16px;
+}
