@@ -139,7 +139,7 @@ function sendMessage() {
 }
 
 // -------------------------------------------------------
-// LOAD MESSAGES IN REALTIME
+// LOAD MESSAGES
 // -------------------------------------------------------
 function loadMessages() {
   const messagesRef = ref(db, `rooms/${roomCode}/messages`);
@@ -157,8 +157,9 @@ function displayMessage(user, text, avatar) {
   const el = document.createElement("div");
   el.classList.add("messageRow");
 
+  // FIXED AVATAR CLASS (prevents stretching!)
   const avatarEl = document.createElement("img");
-  avatarEl.classList.add("msgAvatar");
+  avatarEl.classList.add("chatAvatar");
   avatarEl.src = avatar || "";
 
   const textEl = document.createElement("div");
@@ -172,7 +173,7 @@ function displayMessage(user, text, avatar) {
     openCharacterSheetFromChat({ user, avatar });
   });
 
-  // Handle mentions (ping only to recipient)
+  // Mentions
   handleMentions(el, user, text, username, messageInput);
 
   messagesDiv.appendChild(el);
@@ -204,7 +205,7 @@ function registerPlayer() {
 
       const li = document.createElement("li");
       li.innerHTML = `
-        <img src="${p.avatar || ""}">
+        <img class="chatAvatar" src="${p.avatar || ""}">
         <span>${p.name}</span>
       `;
       playerList.appendChild(li);
