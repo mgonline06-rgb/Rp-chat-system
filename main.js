@@ -11,7 +11,7 @@ import { openCharacterSheetFromChat } from "./profile.js";
 import { handleMentions } from "./mentions.js";
 
 // -------------------------------------------------------
-// Correct Firebase config
+// Firebase configuration
 // -------------------------------------------------------
 const firebaseConfig = {
   apiKey: "AIzaSyDvj83bdrUn2WXrNHFz0e2HNqoWLNlgDc0",
@@ -28,6 +28,9 @@ const firebaseConfig = {
 // -------------------------------------------------------
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
+
+// Expose DB so profile.js can read message history
+window.db = db;
 
 // -------------------------------------------------------
 // UI elements
@@ -51,9 +54,6 @@ let avatarURL = "";
 let username = "";
 let roomCode = "";
 
-// Expose for profile.js
-window.db = db;
-
 // -------------------------------------------------------
 // Avatar Upload
 // -------------------------------------------------------
@@ -61,7 +61,7 @@ avatarInput.addEventListener("change", () => {
   const file = avatarInput.files[0];
   if (file) {
     const reader = new FileReader();
-    reader.onload = e => { avatarURL = e.target.result; };
+    reader.onload = e => (avatarURL = e.target.result);
     reader.readAsDataURL(file);
   }
 });
@@ -70,7 +70,6 @@ avatarInput.addEventListener("change", () => {
 // Join room (BOOK OPENS HERE)
 // -------------------------------------------------------
 joinBtn.addEventListener("click", () => {
-
   username = usernameInput.value.trim();
   const password = document.getElementById("password").value.trim();
 
@@ -79,6 +78,7 @@ joinBtn.addEventListener("click", () => {
 
   let inputRoom = roomInput.value.trim();
 
+  // Auto-create room if empty
   if (!inputRoom) {
     roomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
     alert("Room created! Share this code: " + roomCode);
@@ -89,22 +89,19 @@ joinBtn.addEventListener("click", () => {
   currentRoomSpan.textContent = roomCode;
   window.roomCode = roomCode;
 
-  // Switch screens
   loginDiv.style.display = "none";
   chatDiv.style.display = "block";
 
-  // Book opening animation
+  // Book-opening animation
   chatDiv.classList.remove("closed");
-  setTimeout(() => {
-    chatDiv.classList.add("open");
-  }, 60);
+  setTimeout(() => chatDiv.classList.add("open"), 50);
 
   // Load messages
   messagesDiv.innerHTML = "";
 
   const messagesRef = ref(db, "rooms/" + roomCode + "/messages");
 
-  off(messagesRef); // avoid duplicate listeners
+  off(messagesRef); // Prevent duplicate listeners
 
   onChildAdded(messagesRef, snap => {
     const data = snap.val();
@@ -140,10 +137,9 @@ sendBtn.addEventListener("click", () => {
 });
 
 // -------------------------------------------------------
-// Show a message in the chat
+// Add a message to the screen
 // -------------------------------------------------------
 function addMessage(user, text, avatar) {
-
   const msgEl = document.createElement("div");
   msgEl.classList.add("message");
 
@@ -156,7 +152,7 @@ function addMessage(user, text, avatar) {
   msgEl.append(imgEl);
   msgEl.append(textEl);
 
-  // Click → open character sheet
+  // Open character sheet on click
   msgEl.addEventListener("click", () => {
     openCharacterSheetFromChat({
       user,
@@ -166,10 +162,9 @@ function addMessage(user, text, avatar) {
     });
   });
 
-  // Mentions (highlight + shift-click)
+  // Mentions system
   handleMentions(msgEl, user, text, username, messageInput);
 
   messagesDiv.append(msgEl);
   messagesDiv.scrollTop = messagesDiv.scrollHeight;
 }
-
