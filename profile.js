@@ -1,10 +1,12 @@
 // -------------------------------------------------------
-// SCROLL-THEMED EDITABLE CHARACTER SHEET (DRAGGABLE)
+// SCROLL-THEMED EDITABLE CHARACTER SHEET
 // -------------------------------------------------------
 
-import { ref, onChildAdded } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js";
+import {
+  ref,
+  onChildAdded
+} from "https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js";
 
-// Called from main.js when clicking a player's message
 export function openCharacterSheetFromChat(player) {
   openCharacterSheet(
     player.user,
@@ -19,38 +21,34 @@ function openCharacterSheet(user, avatar, rpName, bio) {
   win.classList.add("profileWindow");
 
   win.innerHTML = `
-    <div class="profileTitleBar">
-        Character Sheet
-        <button class="closeProfile">✖</button>
+    <button class="closeProfile">✖</button>
+
+    <h3>Character Sheet</h3>
+
+    <div class="profileHeader">
+      <img src="${avatar || ""}">
+      <div>
+        <input class="rpNameInput" value="${rpName}" />
+        <br/>
+        <small>@${user}</small>
+      </div>
     </div>
 
-    <div class="profileContent">
+    <label>Bio:</label>
+    <textarea class="bioInput">${bio}</textarea>
 
-      <div class="profileHeader">
-        <img src="${avatar || ""}">
-        <div class="profileNameBlock">
-          <input class="rpNameInput" value="${rpName}" />
-          <small>@${user}</small>
-        </div>
-      </div>
+    <button class="primary saveProfile" style="margin-top:8px;">Save</button>
 
-      <label class="bioLabel">Bio:</label>
-      <textarea class="bioInput">${bio}</textarea>
-
-      <button class="saveProfile">Save</button>
-
-      <h4>Message History:</h4>
-      <div class="profileMessages" id="history-${user}">
-        <i>Gathering scrolls…</i>
-      </div>
-
+    <h4 style="margin-top:14px;">Message History:</h4>
+    <div class="profileMessages" id="history-${user}">
+      <i>Gathering scrolls…</i>
     </div>
   `;
 
   // Close button
   win.querySelector(".closeProfile").addEventListener("click", () => win.remove());
 
-  // Save button → local memory for now
+  // Save button – stored locally per browser for now
   win.querySelector(".saveProfile").addEventListener("click", () => {
     const newName = win.querySelector(".rpNameInput").value;
     const newBio = win.querySelector(".bioInput").value;
@@ -61,25 +59,26 @@ function openCharacterSheet(user, avatar, rpName, bio) {
       bio: newBio
     };
 
-    alert("Character sheet saved!");
+    alert("Character sheet saved (locally on this device).");
   });
 
   document.body.appendChild(win);
 
   loadUserMessageHistory(user, `history-${user}`);
-  makeDraggable(win); // enable dragging
 }
 
 // -------------------------------------------------------
-// LOAD USER MESSAGE HISTORY
+// LOAD USER MESSAGE HISTORY FOR THIS CHARACTER
 // -------------------------------------------------------
 function loadUserMessageHistory(targetUser, containerId) {
-  if (!window.db || !window.roomCode) return;
+  const db = window.db;
+  const roomCode = window.getCurrentRoom && window.getCurrentRoom();
+  if (!db || !roomCode) return;
 
   const container = document.getElementById(containerId);
   container.innerHTML = "";
 
-  const messagesRef = ref(window.db, "rooms/" + window.roomCode + "/messages");
+  const messagesRef = ref(db, "rooms/" + roomCode + "/messages");
 
   onChildAdded(messagesRef, snap => {
     const msg = snap.val();
@@ -88,39 +87,5 @@ function loadUserMessageHistory(targetUser, containerId) {
       p.textContent = msg.text;
       container.appendChild(p);
     }
-  });
-}
-
-// -------------------------------------------------------
-// MAKE CHARACTER SHEET DRAGGABLE
-// -------------------------------------------------------
-function makeDraggable(win) {
-  let isDown = false;
-  let offsetX = 0;
-  let offsetY = 0;
-
-  const header = win.querySelector(".profileTitleBar");
-  header.style.cursor = "grab";
-
-  header.addEventListener("mousedown", (e) => {
-    isDown = true;
-    header.style.cursor = "grabbing";
-
-    offsetX = e.clientX - win.offsetLeft;
-    offsetY = e.clientY - win.offsetTop;
-
-    win.style.transition = "none";
-  });
-
-  document.addEventListener("mouseup", () => {
-    isDown = false;
-    header.style.cursor = "grab";
-  });
-
-  document.addEventListener("mousemove", (e) => {
-    if (!isDown) return;
-
-    win.style.left = `${e.clientX - offsetX}px`;
-    win.style.top = `${e.clientY - offsetY}px`;
   });
 }
