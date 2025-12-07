@@ -1,30 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Fantasy RP Chat</title>
 
-  <!-- Fantasy fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cormorant+Garamond:wght@400;500;600&display=swap" rel="stylesheet">
 
-  <!-- Main style + character sheet style -->
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="profile.css" />
 </head>
-<body>
 
+<body>
   <!-- LOGIN -->
   <div id="login" class="card">
     <h1 class="title">Enter Your Adventurer Name</h1>
-
     <input type="text" id="username" placeholder="Username" />
     <input type="password" id="password" placeholder="Password (1234)" />
     <input type="file" id="avatar" />
     <input type="text" id="roomCode" placeholder="Room Code (leave empty to create new)" />
-
     <button id="joinBtn" class="primary">Enter the Realm</button>
   </div>
 
@@ -39,27 +36,21 @@
     </header>
 
     <section id="chatMain">
-
-      <!-- MESSAGES -->
       <div id="messagesPanel">
         <div id="messages"></div>
-
         <div id="messageForm">
           <input type="text" id="messageInput" placeholder="Speak your words..." />
           <button id="sendBtn" class="primary">Send</button>
         </div>
       </div>
 
-      <!-- PLAYER LIST -->
       <aside id="sidebar">
         <h3 class="title small">Adventurers Present</h3>
         <ul id="playerList"></ul>
       </aside>
-
     </section>
   </div>
 
-  <!-- Mention ping -->
   <audio id="pingSound" src="ping.mp3" preload="auto"></audio>
 
   <script type="module" src="main.js"></script>
