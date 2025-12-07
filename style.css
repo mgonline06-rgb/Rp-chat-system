@@ -72,35 +72,31 @@ input, button {
   background-color: #f0d27a;
 }
 /* -------------------------------------------------------
-   FANTASY CHARACTER SHEET (Spellbook Theme) — FIXED
+   SCROLL-THEMED CHARACTER SHEET (NO IMAGES REQUIRED)
 ------------------------------------------------------- */
 
 .profileWindow {
   position: fixed;
-  
-  /* Center it horizontally relative to the chat */
   top: 80px;
   right: 80px;
 
-  width: 320px;
-  min-height: 380px;
+  width: 360px;
 
-  background: url("https://i.imgur.com/8Q0lXEk.jpeg");
-  background-size: cover;
-
-  border: 3px solid #d4af37;
+  /* Scroll parchment effect */
+  background: linear-gradient(#f7e7c1, #f3dab0);
+  border: 4px solid #a37a32;
   border-radius: 12px;
-  padding: 20px;
-  z-index: 9999;
 
-  box-shadow: 0 0 25px #d4af37, inset 0 0 12px #000;
-  animation: popIn 0.25s ease-out;
+  box-shadow: 0 0 25px rgba(212,175,55,0.8),
+              inset 0 0 15px rgba(0,0,0,0.5);
+
+  padding: 0;
+  z-index: 99999;
 
   font-family: "Cinzel", serif;
-  color: #2b1b00;
+  color: #3a2a10;
 
-  /* Prevent outside styles from stretching inside content */
-  box-sizing: border-box;
+  animation: popIn 0.3s ease-out;
 }
 
 @keyframes popIn {
@@ -108,50 +104,111 @@ input, button {
   100% { transform: scale(1); opacity: 1; }
 }
 
-/* ---------------------------------------------- */
-/* Close Button — FIXED width + alignment */
-/* ---------------------------------------------- */
+/* Scroll ends */
+.scrollTop,
+.scrollBottom {
+  height: 40px;
+  background: linear-gradient(#c49f65, #a37a32);
+  border-bottom: 3px solid #8b6430;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
 
+.scrollBottom {
+  border-top: 3px solid #8b6430;
+  border-bottom: none;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+}
+
+.scrollContent {
+  padding: 20px;
+}
+
+/* Close button */
 .closeProfile {
   position: absolute;
-  top: 8px;
-  right: 8px;
+  top: 6px;
+  right: 6px;
 
   background: #8b0000;
   color: #ffe0e0;
   border: 2px solid #d4af37;
-
-  padding: 4px 10px;
   border-radius: 6px;
 
+  padding: 3px 9px;
   cursor: pointer;
   font-size: 16px;
-  transition: 0.2s;
+
+  z-index: 100000;
 }
 
 .closeProfile:hover {
   background: #b30000;
-  transform: scale(1.15);
+  transform: scale(1.12);
 }
 
-/* ---------------------------------------------- */
-/* Header section — FIXED layout */
-/* ---------------------------------------------- */
-
+/* Header layout */
 .profileHeader {
   display: flex;
-  align-items: center;
   gap: 12px;
-
+  align-items: center;
   margin-bottom: 15px;
-  padding-bottom: 10px;
-  border-bottom: 2px solid #d4af37;
 }
 
 .profileHeader img {
   width: 60px;
   height: 60px;
+  border: 2px solid #a37a32;
   border-radius: 10px;
+  box-shadow: 0 0 8px rgba(163,122,50,0.8);
+}
 
-  border: 2px
+/* Editable RP Name */
+.rpNameInput {
+  width: 160px;
+  font-size: 18px;
+  font-family: "Cinzel", serif;
+  background: rgba(255,255,255,0.6);
+  border: 1px solid #a37a32;
+  padding: 4px;
+  border-radius: 4px;
+}
+
+/* Editable Bio */
+.bioInput {
+  width: 100%;
+  height: 80px;
+  background: rgba(255,255,255,0.6);
+  border: 1px solid #a37a32;
+  border-radius: 6px;
+  padding: 6px;
+  font-family: "Cinzel", serif;
+}
+
+/* Save Button */
+.saveProfile {
+  background: #d4af37;
+  border: 2px solid #a37a32;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin: 8px 0 12px 0;
+  font-weight: bold;
+  color: #3a2a10;
+}
+
+.saveProfile:hover {
+  background: #e6c75a;
+}
+
+/* Message history */
+.profileMessages {
+  background: rgba(255,255,230,0.75);
+  border: 1px solid #a37a32;
+  border-radius: 8px;
+  padding: 10px;
+  max-height: 200px;
+  overflow-y: auto;
+}
 
