@@ -3,18 +3,15 @@
 // -------------------------------------------------------
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
 import {
-  getDatabase,
-  ref,
-  push,
-  onChildAdded,
-  off
+  getDatabase, ref, push, onChildAdded, off
 } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js";
 
+// Character sheet + mentions
 import { openCharacterSheetFromChat } from "./profile.js";
 import { handleMentions } from "./mentions.js";
 
 // -------------------------------------------------------
-// Firebase config
+// Correct Firebase config
 // -------------------------------------------------------
 const firebaseConfig = {
   apiKey: "AIzaSyDvj83bdrUn2WXrNHFz0e2HNqoWLNlgDc0",
@@ -31,7 +28,6 @@ const firebaseConfig = {
 // -------------------------------------------------------
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
-window.db = db;
 
 // -------------------------------------------------------
 // UI elements
@@ -42,52 +38,73 @@ const joinBtn = document.getElementById("joinBtn");
 const sendBtn = document.getElementById("sendBtn");
 const messagesDiv = document.getElementById("messages");
 const usernameInput = document.getElementById("username");
-const passwordInput = document.getElementById("password");
 const messageInput = document.getElementById("messageInput");
 const avatarInput = document.getElementById("avatar");
 const roomInput = document.getElementById("roomCode");
 const currentRoomSpan = document.getElementById("currentRoom");
 const copyBtn = document.getElementById("copyRoomBtn");
 
+// -------------------------------------------------------
+// App State
+// -------------------------------------------------------
 let avatarURL = "";
 let username = "";
 let roomCode = "";
 
+// Expose for profile.js
+window.db = db;
+
 // -------------------------------------------------------
-// Avatar upload
+// Avatar Upload
 // -------------------------------------------------------
 avatarInput.addEventListener("change", () => {
   const file = avatarInput.files[0];
   if (file) {
     const reader = new FileReader();
-    reader.onload = e => avatarURL = e.target.result;
+    reader.onload = e => { avatarURL = e.target.result; };
     reader.readAsDataURL(file);
   }
 });
 
 // -------------------------------------------------------
-// Join room
+// Join room (BOOK OPENS HERE)
 // -------------------------------------------------------
 joinBtn.addEventListener("click", () => {
   username = usernameInput.value.trim();
-  const password = passwordInput.value.trim();
+  const password = document.getElementById("password").value.trim();
 
-  if (!username) return alert("Please enter a username.");
-  if (password !== "1234") return alert("Password incorrect.");
+  if (!username) return alert("Enter a username!");
+  if (password !== "1234") return alert("Incorrect password!");
 
   let inputRoom = roomInput.value.trim();
-  roomCode = inputRoom ? inputRoom.toUpperCase() :
-                         Math.random().toString(36).substring(2, 8).toUpperCase();
 
-  window.roomCode = roomCode; // make available to profile.js
+  // Create new or join existing
+  if (!inputRoom) {
+    roomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+    alert("Room created! Share this code: " + roomCode);
+  } else {
+    roomCode = inputRoom.toUpperCase();
+  }
+
   currentRoomSpan.textContent = roomCode;
 
+  // Update global so profile.js can read correctly
+  window.roomCode = roomCode;
+
+  // Swap login screen → book chat
   loginDiv.style.display = "none";
   chatDiv.style.display = "block";
-  messagesDiv.innerHTML = "";
 
+  // Trigger book-opening animation
+  chatDiv.classList.remove("closed");
+  setTimeout(() => chatDiv.classList.add("open"), 80);
+
+  // Load messages
+  messagesDiv.innerHTML = "";
   const messagesRef = ref(db, "rooms/" + roomCode + "/messages");
-  off(messagesRef); // prevent duplicate listeners
+
+  // Prevent multiple listeners
+  off(messagesRef);
 
   onChildAdded(messagesRef, snap => {
     const data = snap.val();
@@ -100,9 +117,9 @@ joinBtn.addEventListener("click", () => {
 // -------------------------------------------------------
 // Copy room code
 // -------------------------------------------------------
-copyBtn.addEventListener("click", () => {
-  if (roomCode) navigator.clipboard.writeText(roomCode);
-});
+copyBtn.addEventListener("click", () =>
+  navigator.clipboard.writeText(roomCode)
+);
 
 // -------------------------------------------------------
 // Send message
@@ -111,17 +128,18 @@ sendBtn.addEventListener("click", () => {
   const msg = messageInput.value.trim();
   if (!msg) return;
 
-  push(ref(db, "rooms/" + roomCode + "/messages"), {
+  const msgData = {
     user: username,
     text: msg,
     avatar: avatarURL
-  });
+  };
 
+  push(ref(db, "rooms/" + roomCode + "/messages"), msgData);
   messageInput.value = "";
 });
 
 // -------------------------------------------------------
-// Add message to chat
+// Add message to screen (supports profile popups & mentions)
 // -------------------------------------------------------
 function addMessage(user, text, avatar) {
   const msgEl = document.createElement("div");
@@ -129,27 +147,17 @@ function addMessage(user, text, avatar) {
 
   const imgEl = document.createElement("img");
   imgEl.src = avatar || "";
+
   const textEl = document.createElement("span");
   textEl.textContent = `${user}: ${text}`;
 
   msgEl.append(imgEl);
   msgEl.append(textEl);
 
-  // Mentions.js handler
-  handleMentions(msgEl, user, text, username, messageInput);
-
-  // Default click → open character sheet
-  msgEl.addEventListener("click", e => {
-    if (e.shiftKey) return; // mention already handled
-
+  // Click → character sheet
+  msgEl.addEventListener("click", () => {
     openCharacterSheetFromChat({
-      user,
-      avatar: avatar || "",
+      user: user,
+      avatar: avatar,
       rpName: user,
-      bio: ""
-    });
-  });
-
-  messagesDiv.append(msgEl);
-  messagesDiv.scrollTop = messagesDiv.scrollHeight;
-}
+      bio: "N
