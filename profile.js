@@ -2,8 +2,15 @@
 // SCROLL-THEMED EDITABLE CHARACTER SHEET
 // -------------------------------------------------------
 
+import { ref, onChildAdded } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js";
+
 export function openCharacterSheetFromChat(player) {
-  openCharacterSheet(player.user, player.avatar, player.rpName || player.user, player.bio || "");
+  openCharacterSheet(
+    player.user,
+    player.avatar,
+    player.rpName || player.user,
+    player.bio || ""
+  );
 }
 
 function openCharacterSheet(user, avatar, rpName, bio) {
@@ -42,6 +49,9 @@ function openCharacterSheet(user, avatar, rpName, bio) {
 
   // Close button
   win.querySelector(".closeProfile").addEventListener("click", () => win.remove());
+
+  // Save button (local storage for now)
+  win.querySelector(".saveProfil
 
   // Save button
   win.querySelector(".saveProfile").addEventListener("click", () => {
