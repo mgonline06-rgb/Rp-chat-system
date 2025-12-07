@@ -14,22 +14,19 @@
 </head>
 <body>
 
-  <!-- LOGIN CARD -------------------------------------------------------- -->
+  <!-- LOGIN -->
   <div id="login" class="card">
     <h1 class="title">Enter Your Adventurer Name</h1>
 
     <input type="text" id="username" placeholder="Username" />
-
     <input type="password" id="password" placeholder="Password (1234)" />
-
     <input type="file" id="avatar" />
-
     <input type="text" id="roomCode" placeholder="Room Code (leave empty to create new)" />
 
     <button id="joinBtn" class="primary">Enter the Realm</button>
   </div>
 
-  <!-- CHAT LAYOUT ------------------------------------------------------- -->
+  <!-- CHAT -->
   <div id="chat" class="card" style="display:none;">
     <header id="chatHeader">
       <div>
@@ -40,7 +37,8 @@
     </header>
 
     <section id="chatMain">
-      <!-- LEFT: messages -->
+
+      <!-- MESSAGES -->
       <div id="messagesPanel">
         <div id="messages"></div>
 
@@ -50,18 +48,18 @@
         </div>
       </div>
 
-      <!-- RIGHT: player list -->
+      <!-- PLAYER LIST -->
       <aside id="sidebar">
         <h3 class="title small">Adventurers Present</h3>
         <ul id="playerList"></ul>
       </aside>
+
     </section>
   </div>
 
-  <!-- Ping sound for mentions (put ping.mp3 next to these files) -->
+  <!-- Mention ping -->
   <audio id="pingSound" src="ping.mp3" preload="auto"></audio>
 
-  <!-- Only main.js; it imports the others -->
   <script type="module" src="main.js"></script>
 </body>
 </html>
