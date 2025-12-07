@@ -1,4 +1,24 @@
 // Grab elements
+// ===== Firebase =====
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+
+// Your Firebase config
+const firebaseConfig = {
+  apiKey: "AIzaSyDvj83bdrUn2WXrNHFz0e2HNqoWLNlgDc0",
+  authDomain: "rp-system-01.firebaseapp.com",
+  databaseURL: "https://rp-system-01-default-rtdb.firebaseio.com",
+  projectId: "rp-system-01",
+  storageBucket: "rp-system-01.appspot.com",
+  messagingSenderId: "594537856244",
+  appId: "1:594537856244:web:8311aaed52979b647772a1"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+// ===== Elements =====
 const loginDiv = document.getElementById("login");
 const chatDiv = document.getElementById("chat");
 const joinBtn = document.getElementById("joinBtn");
@@ -7,63 +27,75 @@ const messagesDiv = document.getElementById("messages");
 const usernameInput = document.getElementById("username");
 const messageInput = document.getElementById("messageInput");
 const avatarInput = document.getElementById("avatar");
+const roomInput = document.getElementById("roomCode");
+const currentRoomSpan = document.getElementById("currentRoom");
 
-let avatarURL = ""; // store selected avatar
+let avatarURL = "";
+let username = "";
+let roomCode = "";
 
-// Test JS is running
-console.log("JavaScript is running!");
-
-// Handle avatar upload
+// ===== Avatar Upload =====
 avatarInput.addEventListener("change", () => {
   const file = avatarInput.files[0];
   if (file) {
     const reader = new FileReader();
-    reader.onload = function(e) {
-      avatarURL = e.target.result; // base64 URL
-    };
+    reader.onload = e => { avatarURL = e.target.result; }
     reader.readAsDataURL(file);
   }
 });
 
-// Join chat button
+// ===== Join Room =====
 joinBtn.addEventListener("click", () => {
-  const username = usernameInput.value.trim();
+  username = usernameInput.value.trim();
   const password = document.getElementById("password").value.trim();
+  let inputRoom = roomInput.value.trim();
 
-  if (!username) {
-    alert("Enter your username!");
-    return;
+  if (!username) { alert("Enter a username!"); return; }
+  if (password !== "1234") { alert("Incorrect password!"); return; }
+
+  // Create new room if empty
+  if (!inputRoom) {
+    roomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+    alert("Room created! Share this code with friends: " + roomCode);
+  } else {
+    roomCode = inputRoom.toUpperCase();
   }
+  currentRoomSpan.textContent = roomCode;
 
-  // Simple password check
-  if (password !== "1234") {
-    alert("Incorrect password!");
-    return;
-  }
+  loginDiv.style.display = "none";
+  chatDiv.style.display = "block";
 
-  loginDiv.style.display = "none";  // hide login screen
-  chatDiv.style.display = "block";   // show chat screen
+  addMessage("System", `Welcome ${username}! Joined room ${roomCode}`, "");
 
-  addMessage("System", `Welcome ${username}!`, avatarURL);
+  // Listen for messages in this room
+  const messagesRef = ref(db, 'rooms/' + roomCode + '/messages');
+  onChildAdded(messagesRef, snapshot => {
+    const data = snapshot.val();
+    addMessage(data.user, data.text, data.avatar);
+  });
 });
 
-// Send message button
+// ===== Send Message =====
 sendBtn.addEventListener("click", () => {
   const msg = messageInput.value.trim();
   if (!msg) return;
 
-  const username = usernameInput.value.trim();
-  addMessage(username, msg, avatarURL);
+  const msgData = { user: username, text: msg, avatar: avatarURL };
+  push(ref(db, 'rooms/' + roomCode + '/messages'), msgData);
   messageInput.value = "";
 });
 
-// Add a message to chat
+// ===== Display Messages =====
 function addMessage(user, text, avatar = "") {
   const msgEl = document.createElement("div");
   msgEl.classList.add("message");
 
   const imgEl = document.createElement("img");
-  imgEl.src = avatar || ""; 
+  imgEl.src = avatar || "";
+  imgEl.width = 40;
+  imgEl.height = 40;
+  imgEl.style.borderRadius = "50%";
+  imgEl.style.marginRight = "10px";
 
   const textEl = document.createElement("span");
   textEl.textContent = `${user}: ${text}`;
@@ -73,5 +105,6 @@ function addMessage(user, text, avatar = "") {
   messagesDiv.appendChild(msgEl);
   messagesDiv.scrollTop = messagesDiv.scrollHeight;
 }
+
 
 
