@@ -111,8 +111,3 @@ function addMessage(user, text, avatar) {
   messagesDiv.appendChild(msgEl);
   messagesDiv.scrollTop = messagesDiv.scrollHeight;
 }
-
-
-
-
-
