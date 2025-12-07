@@ -1,13 +1,19 @@
 // -------------------------------------------------------
-// Firebase imports
+// Firebase v12 imports
 // -------------------------------------------------------
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
 import {
-  getDatabase, ref, push, onChildAdded, off
+  getDatabase,
+  ref,
+  push,
+  onChildAdded,
+  off
 } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js";
 
+// Character sheet + mentions + swear filter
 import { openCharacterSheetFromChat } from "./profile.js";
 import { handleMentions } from "./mentions.js";
+import { filterMessage } from "./filter.js";
 
 // -------------------------------------------------------
 // Firebase config
@@ -15,7 +21,8 @@ import { handleMentions } from "./mentions.js";
 const firebaseConfig = {
   apiKey: "AIzaSyDvj83bdrUn2WXrNHFz0e2HNqoWLNlgDc0",
   authDomain: "rp-system-01.firebaseapp.com",
-  databaseURL: "https://rp-system-01-default-rtdb.europe-west1.firebasedatabase.app",
+  databaseURL:
+    "https://rp-system-01-default-rtdb.europe-west1.firebasedatabase.app",
   projectId: "rp-system-01",
   storageBucket: "rp-system-01.firebasestorage.app",
   messagingSenderId: "594537856244",
@@ -23,9 +30,12 @@ const firebaseConfig = {
 };
 
 // -------------------------------------------------------
+// Init Firebase
+// -------------------------------------------------------
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
+// make available to profile.js
 window.db = db;
 
 // -------------------------------------------------------
@@ -41,104 +51,143 @@ const messageInput = document.getElementById("messageInput");
 const avatarInput = document.getElementById("avatar");
 const roomInput = document.getElementById("roomCode");
 const currentRoomSpan = document.getElementById("currentRoom");
+const copyBtn = document.getElementById("copyRoomBtn");
 
+// -------------------------------------------------------
+// Global state
 // -------------------------------------------------------
 let avatarURL = "";
 let username = "";
 let roomCode = "";
 
 // -------------------------------------------------------
-// Avatar Upload
+// Avatar upload
 // -------------------------------------------------------
 avatarInput.addEventListener("change", () => {
   const file = avatarInput.files[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = e => avatarURL = e.target.result;
-    reader.readAsDataURL(file);
-  }
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    avatarURL = e.target.result;
+  };
+  reader.readAsDataURL(file);
 });
 
 // -------------------------------------------------------
-// Join Room
+// Join room
 // -------------------------------------------------------
 joinBtn.addEventListener("click", () => {
-
   username = usernameInput.value.trim();
   const password = document.getElementById("password").value.trim();
 
-  if (!username) return alert("Enter a username!");
-  if (password !== "1234") return alert("Incorrect password!");
+  if (!username) {
+    alert("Enter a username!");
+    return;
+  }
+  if (password !== "1234") {
+    alert("Incorrect password!");
+    return;
+  }
 
   let inputRoom = roomInput.value.trim();
 
   if (!inputRoom) {
-    roomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
-    alert("Room created! Code: " + roomCode);
+    roomCode = Math.random()
+      .toString(36)
+      .substring(2, 8)
+      .toUpperCase();
+    alert("Room created! Share this code: " + roomCode);
   } else {
     roomCode = inputRoom.toUpperCase();
   }
 
   currentRoomSpan.textContent = roomCode;
-  window.roomCode = roomCode;
+  window.roomCode = roomCode; // for profile.js
 
-  // Show book
   loginDiv.style.display = "none";
-  chatDiv.style.display = "flex";
+  chatDiv.style.display = "block";
 
-  setTimeout(() => chatDiv.classList.add("open"), 50);
-
+  // load messages for this room
   messagesDiv.innerHTML = "";
 
   const messagesRef = ref(db, "rooms/" + roomCode + "/messages");
-  off(messagesRef);
+  off(messagesRef); // avoid duplicate listeners
 
   onChildAdded(messagesRef, snap => {
     const data = snap.val();
-    addMessage(data.user, data.text, data.avatar);
+    addMessage(data.user, data.text, data.avatar, false);
   });
 
-  addMessage("System", `Welcome ${username}!`);
+  addMessage("System", `Welcome ${username}!`, "", true);
 });
 
 // -------------------------------------------------------
-// Send Message
+// Copy room code
 // -------------------------------------------------------
-sendBtn.addEventListener("click", () => {
-  const msg = messageInput.value.trim();
-  if (!msg) return;
+copyBtn.addEventListener("click", () => {
+  if (!roomCode) return;
+  navigator.clipboard.writeText(roomCode);
+});
 
-  push(ref(db, "rooms/" + roomCode + "/messages"), {
+// -------------------------------------------------------
+// Send message
+// -------------------------------------------------------
+sendBtn.addEventListener("click", sendCurrentMessage);
+messageInput.addEventListener("keydown", e => {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    sendCurrentMessage();
+  }
+});
+
+function sendCurrentMessage() {
+  const raw = messageInput.value.trim();
+  if (!raw || !roomCode) return;
+
+  const text = filterMessage(raw); // apply swear filter
+
+  const msgData = {
     user: username,
-    text: msg,
+    text,
     avatar: avatarURL
-  });
+  };
 
+  push(ref(db, "rooms/" + roomCode + "/messages"), msgData);
   messageInput.value = "";
-});
+}
 
 // -------------------------------------------------------
-// Add message to screen
+// Show a message in chat
 // -------------------------------------------------------
-function addMessage(user, text, avatar) {
-
+function addMessage(user, text, avatar, isSystem) {
   const msgEl = document.createElement("div");
   msgEl.classList.add("message");
+  if (isSystem || user === "System") {
+    msgEl.classList.add("system");
+  }
 
   const imgEl = document.createElement("img");
   imgEl.src = avatar || "";
-
   const textEl = document.createElement("span");
   textEl.textContent = `${user}: ${text}`;
 
   msgEl.append(imgEl);
   msgEl.append(textEl);
 
-  msgEl.addEventListener("click", () => {
-    openCharacterSheetFromChat({ user, avatar });
+  // Mentions + click to open character sheet
+  handleMentions(msgEl, {
+    sender: user,
+    text,
+    currentUser: username,
+    inputEl: messageInput,
+    openProfile: () => {
+      openCharacterSheetFromChat({
+        user,
+        avatar,
+        rpName: user
+      });
+    }
   });
-
-  handleMentions(msgEl, user, text, username, messageInput);
 
   messagesDiv.append(msgEl);
   messagesDiv.scrollTop = messagesDiv.scrollHeight;
