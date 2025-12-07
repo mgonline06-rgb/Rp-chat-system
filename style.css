@@ -58,3 +58,18 @@ body {
   0% { box-shadow: 0 0 15px gold; }
   100% { box-shadow: none; }
 }
+
+/* Avatars inside chat messages */
+.chatAvatar {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* If ANY image tries to stretch, override it */
+#messages img {
+  max-width: 50px;
+  max-height: 50px;
+  object-fit: cover;
+}
