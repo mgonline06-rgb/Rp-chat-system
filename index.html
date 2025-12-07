@@ -8,32 +8,66 @@
 </head>
 <body>
 
+  <!-- ===========================
+       LOGIN SCREEN (unchanged)
+       =========================== -->
   <div id="login">
     <h2>Enter your adventurer name</h2>
+
     <input type="text" id="username" placeholder="Username">
     <input type="password" id="password" placeholder="Password (1234)">
     <input type="file" id="avatar">
+
     <input type="text" id="roomCode" placeholder="Room Code (leave empty to create new)">
+
     <button id="joinBtn">Enter the Realm</button>
   </div>
 
-  <div id="chat" style="display:none;">
-    <div id="roomHeader">
-      <h2>Room: <span id="currentRoom"></span></h2>
-      <button id="copyRoomBtn">Copy Room Code</button>
+  <!-- ===========================
+       BOOK CHAT PANEL
+       =========================== -->
+  <div id="chat" class="book closed" style="display:none;">
+
+    <div class="book-inner">
+
+      <!-- LEFT PAGE -->
+      <div class="page left-page">
+        <div class="page-content">
+          <h2 class="roomTitle">
+            Room: <span id="currentRoom"></span>
+          </h2>
+
+          <button id="copyRoomBtn" class="bookButton">Copy Room Code</button>
+
+          <p class="roomHint">
+            Share this code so other adventurers may open this chapter.
+          </p>
+        </div>
+      </div>
+
+      <!-- RIGHT PAGE (CHAT) -->
+      <div class="page right-page">
+
+        <div id="messages"></div>
+
+        <div class="inputRow">
+          <input type="text" id="messageInput" placeholder="Type your message">
+          <button id="sendBtn" class="bookButton">Send</button>
+        </div>
+
+      </div>
+
     </div>
 
-    <div id="messages"></div>
-
-    <input type="text" id="messageInput" placeholder="Type your message">
-    <button id="sendBtn">Send</button>
   </div>
 
-  <script type="module" src="main.js?v=20"></script>
-  <script type="module" src="profile.js?v=1"></script>
+
+  <!-- ===========================
+       SCRIPTS
+       =========================== -->
+  <script type="module" src="main.js?v=21"></script>
+  <script type="module" src="profile.js?v=2"></script>
   <script type="module" src="mentions.js?v=1"></script>
 
 </body>
 </html>
-
-
