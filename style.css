@@ -54,10 +54,57 @@ body {
   gap: 20px;
 }
 
+/* ----------------------------
+   FIXED CHAT PANEL + SCROLL
+---------------------------- */
 #messagesPanel {
   flex: 3;
+  display: flex;
+  flex-direction: column;
+  height: 600px; /* ← Chat window height */
+  overflow: hidden; /* Prevent expansion */
+  background: rgba(255,255,255,0.03);
+  padding: 12px;
+  border-radius: 12px;
 }
 
+/* Scrollable message area */
+#messages {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+/* Fancy scroll bar */
+#messages::-webkit-scrollbar {
+  width: 10px;
+}
+
+#messages::-webkit-scrollbar-thumb {
+  background: #d9b45e;
+  border-radius: 6px;
+}
+
+#messages::-webkit-scrollbar-track {
+  background: rgba(255,255,255,0.08);
+}
+
+/* MESSAGE FORM */
+#messageForm {
+  display: flex;
+  margin-top: 10px;
+}
+
+#messageForm input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 6px;
+  border: none;
+  margin-right: 10px;
+  font-size: 1rem;
+}
+
+/* PLAYER LIST PANEL */
 #sidebar {
   flex: 1;
   background: rgba(255, 255, 255, 0.05);
@@ -65,7 +112,6 @@ body {
   border-radius: 10px;
 }
 
-/* PLAYER LIST */
 #playerList li {
   display: flex;
   align-items: center;
@@ -88,19 +134,20 @@ body {
   align-items: center;
   background: rgba(255,255,255,0.04);
   margin-bottom: 10px;
-  padding: 8px;
+  padding: 10px;
   border-radius: 8px;
 }
 
-.chatAvatar {
+/* Avatar (for opening profiles) */
+.chatAvatar,
+.msgAvatar {
   width: 42px;
   height: 42px;
   border-radius: 50%;
-  margin-right: 10px;
+  margin-right: 12px;
   cursor: pointer;
 }
 
 .msgText strong {
   color: #e6c77c;
 }
-
