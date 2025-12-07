@@ -129,3 +129,39 @@ sendBtn.addEventListener("click", () => {
 
 // ---------------------------------------------
 
+// -------------------------------------------------------
+// Add message to screen (now supports profile popups)
+// -------------------------------------------------------
+function addMessage(user, text, avatar) {
+  const msgEl = document.createElement("div");
+  msgEl.classList.add("message");
+
+  const imgEl = document.createElement("img");
+  imgEl.src = avatar || "";
+
+  const textEl = document.createElement("span");
+  textEl.textContent = `${user}: ${text}`;
+
+  msgEl.append(imgEl);
+  msgEl.append(textEl);
+
+  // NEW → Clicking a message opens character sheet (handled by profile.js)
+  msgEl.addEventListener("click", () => {
+    openCharacterSheetFromChat({
+      user: user,
+      avatar: avatar,
+      rpName: user,         // placeholder (safe)
+      bio: "No bio yet."    // placeholder (safe)
+    });
+  });
+
+  messagesDiv.append(msgEl);
+  messagesDiv.scrollTop = messagesDiv.scrollHeight;
+}
+
+// -------------------------------------------------------
+// Expose Firebase database + active room to profile.js
+// -------------------------------------------------------
+window.db = db;
+window.roomCode = roomCode;
+
