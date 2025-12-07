@@ -1,120 +1,85 @@
 // -------------------------------------------------------
-// Character sheet module
+// SCROLL-THEMED EDITABLE CHARACTER SHEET (DRAGGABLE)
 // -------------------------------------------------------
-import {
-  ref,
-  onChildAdded
-} from "https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js";
 
+import { ref, onChildAdded } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js";
+
+// Called from main.js when clicking a player's message
 export function openCharacterSheetFromChat(player) {
-  const stored = loadProfile(player.user);
-  const rpName = stored?.rpName || player.rpName || player.user;
-  const bio = stored?.bio || "";
-
-  createSheet({
-    user: player.user,
-    avatar: player.avatar || "",
-    rpName,
-    bio
-  });
+  openCharacterSheet(
+    player.user,
+    player.avatar,
+    player.rpName || player.user,
+    player.bio || ""
+  );
 }
 
-// -------------------------------------------------------
-// Create window
-// -------------------------------------------------------
-function createSheet({ user, avatar, rpName, bio }) {
+function openCharacterSheet(user, avatar, rpName, bio) {
   const win = document.createElement("div");
   win.classList.add("profileWindow");
 
   win.innerHTML = `
-    <div class="profileHeaderBar">
-      <strong>Character Sheet</strong>
-      <button class="closeProfileBtn" aria-label="Close">×</button>
+    <div class="profileTitleBar">
+        Character Sheet
+        <button class="closeProfile">✖</button>
     </div>
 
-    <div class="scrollContent">
+    <div class="profileContent">
+
       <div class="profileHeader">
-        <img src="${avatar || ""}" alt="">
-        <div>
+        <img src="${avatar || ""}">
+        <div class="profileNameBlock">
           <input class="rpNameInput" value="${rpName}" />
-          <br />
           <small>@${user}</small>
         </div>
       </div>
 
-      <label>Bio:</label>
-      <textarea class="bioInput" placeholder="Who are you in this realm?">${bio}</textarea>
+      <label class="bioLabel">Bio:</label>
+      <textarea class="bioInput">${bio}</textarea>
 
-      <button class="saveProfileBtn">Save</button>
+      <button class="saveProfile">Save</button>
 
-      <label style="margin-top:10px;">Message History:</label>
+      <h4>Message History:</h4>
       <div class="profileMessages" id="history-${user}">
         <i>Gathering scrolls…</i>
       </div>
+
     </div>
   `;
 
-  document.body.appendChild(win);
+  // Close button
+  win.querySelector(".closeProfile").addEventListener("click", () => win.remove());
 
-  // close button
-  win.querySelector(".closeProfileBtn").addEventListener("click", () => {
-    win.remove();
-  });
-
-  // save button
-  win.querySelector(".saveProfileBtn").addEventListener("click", () => {
-    const newName = win.querySelector(".rpNameInput").value.trim() || user;
+  // Save button → local memory for now
+  win.querySelector(".saveProfile").addEventListener("click", () => {
+    const newName = win.querySelector(".rpNameInput").value;
     const newBio = win.querySelector(".bioInput").value;
 
-    saveProfile(user, { rpName: newName, bio: newBio });
-    alert("Character sheet saved on this device.");
+    if (!window.rpProfiles) window.rpProfiles = {};
+    window.rpProfiles[user] = {
+      rpName: newName,
+      bio: newBio
+    };
+
+    alert("Character sheet saved!");
   });
 
-  // load history
-  loadHistory(user, `history-${user}`);
+  document.body.appendChild(win);
+
+  loadUserMessageHistory(user, `history-${user}`);
+  makeDraggable(win); // enable dragging
 }
 
 // -------------------------------------------------------
-// Local storage helpers
+// LOAD USER MESSAGE HISTORY
 // -------------------------------------------------------
-function storageKey(user) {
-  return `rpProfile:${user}`;
-}
+function loadUserMessageHistory(targetUser, containerId) {
+  if (!window.db || !window.roomCode) return;
 
-function loadProfile(user) {
-  try {
-    const raw = localStorage.getItem(storageKey(user));
-    if (!raw) return null;
-    return JSON.parse(raw);
-  } catch (e) {
-    return null;
-  }
-}
-
-function saveProfile(user, data) {
-  try {
-    localStorage.setItem(storageKey(user), JSON.stringify(data));
-  } catch (e) {
-    // ignore
-  }
-}
-
-// -------------------------------------------------------
-// Load message history for user in current room
-// -------------------------------------------------------
-function loadHistory(targetUser, containerId) {
   const container = document.getElementById(containerId);
-  if (!container) return;
-
-  const db = window.db;
-  const roomCode = window.roomCode;
-  if (!db || !roomCode) {
-    container.innerHTML = "<i>No room data available.</i>";
-    return;
-  }
-
   container.innerHTML = "";
-  const messagesRef = ref(db, "rooms/" + roomCode + "/messages");
+
+  const messagesRef = ref(window.db, "rooms/" + window.roomCode + "/messages");
 
   onChildAdded(messagesRef, snap => {
     const msg = snap.val();
@@ -123,5 +88,39 @@ function loadHistory(targetUser, containerId) {
       p.textContent = msg.text;
       container.appendChild(p);
     }
+  });
+}
+
+// -------------------------------------------------------
+// MAKE CHARACTER SHEET DRAGGABLE
+// -------------------------------------------------------
+function makeDraggable(win) {
+  let isDown = false;
+  let offsetX = 0;
+  let offsetY = 0;
+
+  const header = win.querySelector(".profileTitleBar");
+  header.style.cursor = "grab";
+
+  header.addEventListener("mousedown", (e) => {
+    isDown = true;
+    header.style.cursor = "grabbing";
+
+    offsetX = e.clientX - win.offsetLeft;
+    offsetY = e.clientY - win.offsetTop;
+
+    win.style.transition = "none";
+  });
+
+  document.addEventListener("mouseup", () => {
+    isDown = false;
+    header.style.cursor = "grab";
+  });
+
+  document.addEventListener("mousemove", (e) => {
+    if (!isDown) return;
+
+    win.style.left = `${e.clientX - offsetX}px`;
+    win.style.top = `${e.clientY - offsetY}px`;
   });
 }
