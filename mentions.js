@@ -1,19 +1,16 @@
-// -------------------------------------------------------
-// Mention Highlight + Shift-Click @Mention System
-// -------------------------------------------------------
+export function handleMentions(msgEl, user, text, currentUser, inputBox) {
 
-export function handleMentions(msgEl, user, text, currentUser, messageInput) {
-
-  // Highlight if message contains @you
-  if (currentUser && text.toLowerCase().includes("@" + currentUser.toLowerCase())) {
-    msgEl.classList.add("mentionHighlight");
+  // Highlight if this message mentions YOU
+  if (text.includes("@" + currentUser)) {
+    msgEl.classList.add("mentionGlow");
+    setTimeout(() => msgEl.classList.remove("mentionGlow"), 2000);
   }
 
-  // SHIFT-click → insert @mention
+  // Shift + click a message → auto-mention that user
   msgEl.addEventListener("click", e => {
     if (e.shiftKey) {
-      messageInput.value = "@" + user + " ";
-      messageInput.focus();
+      inputBox.value = "@" + user + " ";
+      inputBox.focus();
     }
   });
 }
