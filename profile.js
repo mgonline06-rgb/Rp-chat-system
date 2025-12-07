@@ -39,7 +39,7 @@ function openCharacterSheet(user, avatar, rpName, bio) {
 
       <h4>Message History:</h4>
       <div class="profileMessages" id="history-${user}">
-        <i>Gathering scrolls…</i>
+        <i>Gathering scrolls...</i>
       </div>
 
     </div>
@@ -55,7 +55,7 @@ function openCharacterSheet(user, avatar, rpName, bio) {
     const newName = win.querySelector(".rpNameInput").value;
     const newBio = win.querySelector(".bioInput").value;
 
-    // TEMP LOCAL SAVE (Firebase version later)
+    // TEMP LOCAL SAVE
     if (!window.rpProfiles) window.rpProfiles = {};
     window.rpProfiles[user] = {
       rpName: newName,
@@ -67,7 +67,7 @@ function openCharacterSheet(user, avatar, rpName, bio) {
 
   document.body.appendChild(win);
 
-  loadUserMessageHistory(user, `history-${user}`);
+  loadUserMessageHistory(user, "history-" + user);
 }
 
 // -------------------------------------------------------
