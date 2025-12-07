@@ -4,46 +4,52 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Fantasy RP Chat</title>
+
+  <!-- Fantasy Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
   <!-- LOGIN SCREEN -->
   <div id="login">
-    <h2>Enter Your Adventurer Name</h2>
+    <h2>Enter your adventurer name</h2>
 
     <input type="text" id="username" placeholder="Username">
     <input type="password" id="password" placeholder="Password (1234)">
     <input type="file" id="avatar">
-
     <input type="text" id="roomCode" placeholder="Room Code (leave empty to create new)">
-
     <button id="joinBtn">Enter the Realm</button>
   </div>
 
   <!-- CHAT SCREEN -->
-  <div id="chat" class="closed" style="display:none;">
-    <div id="roomHeader">
+  <div id="chat" class="hidden">
+
+    <!-- Left side: Message panel -->
+    <div id="chatPanel">
       <h2>Room: <span id="currentRoom"></span></h2>
       <button id="copyRoomBtn">Copy Room Code</button>
-    </div>
 
-    <div id="messages"></div>
+      <div id="messages"></div>
 
-    <div id="inputRow">
       <input type="text" id="messageInput" placeholder="Type your message">
       <button id="sendBtn">Send</button>
     </div>
+
+    <!-- Right side: Player list -->
+    <div id="playerListPanel">
+      <h3>Adventurers Present</h3>
+      <ul id="playerList"></ul>
+    </div>
+
   </div>
 
-  <!-- Mention Ping Sound -->
-  <audio id="mentionSound" src="ping.mp3" preload="auto"></audio>
-
-  <!-- SCRIPTS -->
-  <script type="module" src="main.js?v=30"></script>
-  <!-- DO NOT load profile.js or mentions.js manually here -->
-  <!-- main.js imports them internally -->
+  <!-- Scripts -->
+  <script type="module" src="main.js?v=100"></script>
+  <script type="module" src="profile.js?v=100"></script>
+  <script type="module" src="mentions.js?v=100"></script>
 
 </body>
 </html>
+
