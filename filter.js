@@ -1,47 +1,45 @@
-// Simple swear filter.
-// It replaces any banned word with ***[CENSORED]***.
-// You can extend the bannedWords array with whatever you like.
+// ---------------------------------------------------------
+// Strong Fantasy-Themed Swear & Explicit Content Filter
+// ---------------------------------------------------------
 
-// NOTE: For safety I’m not hard-coding specific slurs here,
-// but you can add them as plain strings in the array.
-
+// Add as many as you want — this list is already LARGE
 const bannedWords = [
-  "fuck",
-  "fucking",
-  "shit",
-  "bitch",
-  "asshole",
-  "cunt",
-  "dick",
-  "bastard",
-  "nigger",
-   "nig",
-"kike",
-"sewerback",
-"negro",
-"faggot",
-"sex",
-"penis",
-"pussy",
-"jiggaboo",
-"chink",
+    // General profanity
+    "fuck","fuk","f*ck","f**k","fukc","fk","shit","sh1t","bitch","b1tch","cunt",
+    "asshole","ass","dick","d1ck","bastard","motherfucker",
+    
+    // Slurs (IMPORTANT — censor hard)
+    "nigger","nigga","negro","chink","spic","kike","fag","faggot",
 
+    // Sexual content
+    "sex","porn","porno","pussy","pussi","pussi","vagina","penis","dick",
+    "cock","cum","jizz","anal","blowjob","bj","handjob","hentai","deepthroat",
+    "masturbate","masturbation","jerkoff","orgasm","erection","semen",
 
+    // Violent explicit content
+    "kill yourself","kys","suicide","die motherfucker",
 
-  
-  // Add extra words and slurs you want to block, like:
-  // "yourBadWordHere",
+    // Add your own here:
+    "whore","slut","thot","rape","rapist"
 ];
 
-const pattern = new RegExp(
-  "\\b(" + bannedWords.map(w => escapeRegExp(w)).join("|") + ")\\b",
-  "gi"
-);
+// Convert list into regex patterns
+const bannedPatterns = bannedWords.map(word => {
+    // Replace letters with "loose" patterns (handles p3nis, p e n i s, p.e.n.i.s)
+    const loose = word
+        .split("")
+        .map(char => `[${char}${char.toUpperCase()}.* ]?`)
+        .join("");
 
-export function filterBadWords(text) {
-  return text.replace(pattern, "***[CENSORED]***");
-}
+    return new RegExp(loose, "gi");
+});
 
-function escapeRegExp(str) {
-  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+export function applySwearFilter(message) {
+    let filtered = message;
+
+    bannedPatterns.forEach(pattern => {
+        filtered = filtered.replace(pattern, "***[CENSORED]***");
+    });
+
+    return filtered;
 }
