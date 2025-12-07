@@ -1,10 +1,9 @@
 body {
-  font-family: 'Cinzel', serif; /* Classic fantasy font */
-  background: url('https://i.imgur.com/J0y7qI6.jpg') no-repeat center center fixed; /* fantasy parchment background */
-  background-size: cover;
+  font-family: 'Cinzel', serif;
+  background: radial-gradient(circle at top, #3b2a6a, #120b24);
   margin: 0;
   padding: 20px;
-  color: #fff8dc; /* parchment-like text */
+  color: #fff8dc;
 }
 
 #login, #chat {
@@ -12,7 +11,7 @@ body {
   margin: auto;
   background: rgba(34, 34, 34, 0.85);
   padding: 20px;
-  border: 2px solid #d4af37; /* gold border */
+  border: 2px solid #d4af37;
   border-radius: 15px;
   box-shadow: 0 0 15px #d4af37;
 }
@@ -21,7 +20,6 @@ input, button {
   padding: 10px;
   margin: 5px 0;
   width: 100%;
-  box-sizing: border-box;
   border-radius: 8px;
   border: 1px solid #d4af37;
   background-color: #2c2c2c;
@@ -69,9 +67,11 @@ input, button {
   cursor: pointer;
   border-radius: 8px;
 }
+
 #copyRoomBtn:hover {
   background-color: #f0d27a;
 }
+
 
 
 
