@@ -2,15 +2,34 @@
 // SCROLL-THEMED EDITABLE CHARACTER SHEET
 // -------------------------------------------------------
 
-import { ref, onChildAdded } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js";
+import {
+  ref,
+  onChildAdded,
+  set,
+  get
+} from "https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js";
 
 export function openCharacterSheetFromChat(player) {
-  openCharacterSheet(
-    player.user,
-    player.avatar,
-    player.rpName || player.user,
-    player.bio || ""
-  );
+  const profileRef = ref(window.db, "rooms/" + window.roomCode + "/profiles/" + player.user);
+
+  get(profileRef).then(snapshot => {
+    if (snapshot.exists()) {
+      const saved = snapshot.val();
+      openCharacterSheet(
+        player.user,
+        saved.avatar || player.avatar,
+        saved.rpName || player.user,
+        saved.bio || ""
+      );
+    } else {
+      openCharacterSheet(
+        player.user,
+        player.avatar,
+        player.rpName || player.user,
+        player.bio || ""
+      );
+    }
+  });
 }
 
 function openCharacterSheet(user, avatar, rpName, bio) {
@@ -20,14 +39,12 @@ function openCharacterSheet(user, avatar, rpName, bio) {
   win.innerHTML = `
     <button class="closeProfile">✖</button>
 
-    <div class="scrollTop"></div>
-
     <div class="scrollContent">
 
       <div class="profileHeader">
         <img src="${avatar}">
         <div>
-          <input class="rpNameInput" value="${rpName}" />
+          <input class="rpNameInput" value="${rpName}">
           <small>@${user}</small>
         </div>
       </div>
@@ -43,39 +60,35 @@ function openCharacterSheet(user, avatar, rpName, bio) {
       </div>
 
     </div>
-
-    <div class="scrollBottom"></div>
   `;
 
-  // Close button
+  // Close
   win.querySelector(".closeProfile").addEventListener("click", () => win.remove());
 
-  // Save button
+  // Save to Firebase
   win.querySelector(".saveProfile").addEventListener("click", () => {
     const newName = win.querySelector(".rpNameInput").value;
     const newBio = win.querySelector(".bioInput").value;
 
-    // TEMP LOCAL SAVE
-    if (!window.rpProfiles) window.rpProfiles = {};
-    window.rpProfiles[user] = {
-      rpName: newName,
-      bio: newBio
-    };
+    const profileRef = ref(window.db, "rooms/" + window.roomCode + "/profiles/" + user);
 
-    alert("Character sheet saved!");
+    set(profileRef, {
+      rpName: newName,
+      bio: newBio,
+      avatar: avatar
+    });
+
+    alert("Profile saved to the realm!");
   });
 
   document.body.appendChild(win);
-
   loadUserMessageHistory(user, "history-" + user);
 }
 
 // -------------------------------------------------------
-// LOAD USER MESSAGE HISTORY
+// Load user message history
 // -------------------------------------------------------
 function loadUserMessageHistory(targetUser, containerId) {
-  if (!window.db || !window.roomCode) return;
-
   const container = document.getElementById(containerId);
   container.innerHTML = "";
 
@@ -90,3 +103,4 @@ function loadUserMessageHistory(targetUser, containerId) {
     }
   });
 }
+
