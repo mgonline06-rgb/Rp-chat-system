@@ -74,7 +74,7 @@ joinBtn.addEventListener("click", () => {
 
   let inputRoom = roomInput.value.trim();
 
-  // Always uppercase for database consistency
+  // Always uppercase for consistency
   if (!inputRoom) {
     roomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
     alert("Room created! Share this code: " + roomCode);
@@ -82,19 +82,20 @@ joinBtn.addEventListener("click", () => {
     roomCode = inputRoom.toUpperCase();
   }
 
+  // Make roomCode available for profile.js AFTER it is created
+  window.roomCode = roomCode;
+
   currentRoomSpan.textContent = roomCode;
 
   loginDiv.style.display = "none";
   chatDiv.style.display = "block";
 
-  messagesDiv.innerHTML = ""; // Clear previous chat
+  messagesDiv.innerHTML = "";
 
   const messagesRef = ref(db, "rooms/" + roomCode + "/messages");
 
-  // Remove previous listeners to avoid duplication
-  off(messagesRef);
+  off(messagesRef); // Prevent duplicate listeners
 
-  // Attach listener for new messages
   onChildAdded(messagesRef, snap => {
     const data = snap.val();
     addMessage(data.user, data.text, data.avatar);
@@ -127,8 +128,6 @@ sendBtn.addEventListener("click", () => {
   messageInput.value = "";
 });
 
-// ---------------------------------------------
-
 // -------------------------------------------------------
 // Add message to screen (now supports profile popups)
 // -------------------------------------------------------
@@ -145,13 +144,13 @@ function addMessage(user, text, avatar) {
   msgEl.append(imgEl);
   msgEl.append(textEl);
 
-  // NEW → Clicking a message opens character sheet (handled by profile.js)
+  // Clicking a message opens the character sheet
   msgEl.addEventListener("click", () => {
     openCharacterSheetFromChat({
       user: user,
       avatar: avatar,
-      rpName: user,         // placeholder (safe)
-      bio: "No bio yet."    // placeholder (safe)
+      rpName: user,       // placeholder
+      bio: "No bio yet."  // placeholder
     });
   });
 
@@ -160,8 +159,6 @@ function addMessage(user, text, avatar) {
 }
 
 // -------------------------------------------------------
-// Expose Firebase database + active room to profile.js
+// Expose Firebase db so profile.js can use it
 // -------------------------------------------------------
 window.db = db;
-window.roomCode = roomCode;
-
