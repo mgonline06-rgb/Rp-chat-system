@@ -1,14 +1,14 @@
 // -------------------------------------------------------
-// PROFILE SYSTEM (SAFE SEPARATE MODULE)
+// PROFILE SYSTEM — SEPARATE & SAFE
 // -------------------------------------------------------
 
-// Allow main.js to call this
+// Called by main.js when a chat message is clicked
 export function openCharacterSheetFromChat(player) {
   openCharacterSheet(player.user, player.avatar, player.rpName, player.bio);
 }
 
 // -------------------------------------------------------
-// Create a popup window showing character info + message history
+// Create popup window showing character sheet
 // -------------------------------------------------------
 function openCharacterSheet(user, avatar, rpName, bio) {
   const win = document.createElement("div");
@@ -25,17 +25,17 @@ function openCharacterSheet(user, avatar, rpName, bio) {
       </div>
     </div>
 
-    <p><b>CHARACTER NAME:</b><br>${rpName}</p>
+    <p><b>CHARACTER NAME:</b><br> ${rpName}</p>
 
-    <p><b>CHARACTER BIO:</b><br>${bio.replace(/\n/g, "<br>")}</p>
+    <p><b>BIO:</b><br> ${bio.replace(/\n/g, "<br>")}</p>
 
-    <h4>Message History:</h4>
+    <h4>Message History</h4>
     <div class="profileMessages" id="history-${user}">
       Loading...
     </div>
   `;
 
-  // Close button
+  // Close window
   win.querySelector(".closeProfile").addEventListener("click", () => {
     win.remove();
   });
@@ -46,26 +46,18 @@ function openCharacterSheet(user, avatar, rpName, bio) {
 }
 
 // -------------------------------------------------------
-// Load message history (non-destructive)
+// Load message history for that user
 // -------------------------------------------------------
-function loadUserMessageHistory(username, containerId) {
-  if (!window.roomCode || !window.db) {
-    console.warn("Chat not initialized yet.");
+function loadUserMessageHistory(targetUser, containerId) {
+  // Make sure db & roomCode exist (main.js provides these)
+  if (!window.db || !window.roomCode) {
+    console.warn("Chat not ready yet.");
     return;
   }
 
   const container = document.getElementById(containerId);
   container.innerHTML = "";
 
-  const messagesRef = ref(window.db, "rooms/" + window.roomCode + "/messages");
+  // Firebase reference to messages
+  const messagesRef = ref(w
 
-  onChildAdded(messagesRef, snap => {
-    const data = snap.val();
-
-    if (data.user === username) {
-      const p = document.createElement("p");
-      p.textContent = data.text;
-      container.appendChild(p);
-    }
-  });
-}
