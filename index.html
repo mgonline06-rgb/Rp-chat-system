@@ -1,55 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Fantasy RP Chat</title>
 
-  <!-- Fantasy Font -->
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
+  <!-- Fantasy fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cormorant+Garamond:wght@400;500;600&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-  <!-- LOGIN SCREEN -->
-  <div id="login">
-    <h2>Enter your adventurer name</h2>
+  <!-- LOGIN CARD -------------------------------------------------------- -->
+  <div id="login" class="card">
+    <h1 class="title">Enter Your Adventurer Name</h1>
 
-    <input type="text" id="username" placeholder="Username">
-    <input type="password" id="password" placeholder="Password (1234)">
-    <input type="file" id="avatar">
-    <input type="text" id="roomCode" placeholder="Room Code (leave empty to create new)">
-    <button id="joinBtn">Enter the Realm</button>
+    <input type="text" id="username" placeholder="Username" />
+
+    <input type="password" id="password" placeholder="Password (1234)" />
+
+    <input type="file" id="avatar" />
+
+    <input type="text" id="roomCode" placeholder="Room Code (leave empty to create new)" />
+
+    <button id="joinBtn" class="primary">Enter the Realm</button>
   </div>
 
-  <!-- CHAT SCREEN -->
-  <div id="chat" class="hidden">
+  <!-- CHAT LAYOUT ------------------------------------------------------- -->
+  <div id="chat" class="card" style="display:none;">
+    <header id="chatHeader">
+      <div>
+        <h2 class="title">Room: <span id="currentRoom"></span></h2>
+        <p class="subtitle">Share this code so other adventurers may open this chapter.</p>
+      </div>
+      <button id="copyRoomBtn" class="secondary">Copy Room Code</button>
+    </header>
 
-    <!-- Left side: Message panel -->
-    <div id="chatPanel">
-      <h2>Room: <span id="currentRoom"></span></h2>
-      <button id="copyRoomBtn">Copy Room Code</button>
+    <section id="chatMain">
+      <!-- LEFT: messages -->
+      <div id="messagesPanel">
+        <div id="messages"></div>
 
-      <div id="messages"></div>
+        <div id="messageForm">
+          <input type="text" id="messageInput" placeholder="Speak your words..." />
+          <button id="sendBtn" class="primary">Send</button>
+        </div>
+      </div>
 
-      <input type="text" id="messageInput" placeholder="Type your message">
-      <button id="sendBtn">Send</button>
-    </div>
-
-    <!-- Right side: Player list -->
-    <div id="playerListPanel">
-      <h3>Adventurers Present</h3>
-      <ul id="playerList"></ul>
-    </div>
-
+      <!-- RIGHT: player list -->
+      <aside id="sidebar">
+        <h3 class="title small">Adventurers Present</h3>
+        <ul id="playerList"></ul>
+      </aside>
+    </section>
   </div>
 
-  <!-- Scripts -->
-  <script type="module" src="main.js?v=100"></script>
-  <script type="module" src="profile.js?v=100"></script>
-  <script type="module" src="mentions.js?v=100"></script>
+  <!-- Ping sound for mentions (put ping.mp3 next to these files) -->
+  <audio id="pingSound" src="ping.mp3" preload="auto"></audio>
 
+  <!-- Only main.js; it imports the others -->
+  <script type="module" src="main.js"></script>
 </body>
 </html>
-
