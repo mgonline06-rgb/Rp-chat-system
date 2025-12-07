@@ -1,25 +1,18 @@
-export function handleMentions(messageElement, user, text, currentUser, inputBox) {
+export function handleMentions(messageEl, sender, text, currentUser, inputBox) {
+  const pingSound = document.getElementById("pingSound");
 
-  const regex = /@([a-zA-Z0-9_]+)/g;
-  const matches = text.match(regex);
-  if (!matches) return;
+  const words = text.split(" ");
 
-  matches.forEach(tag => {
-    const mentioned = tag.replace("@", "").trim();
+  words.forEach(w => {
+    if (w.toLowerCase() === ("@" + currentUser).toLowerCase()) {
+      messageEl.style.boxShadow = "0 0 15px gold";
 
-    // Highlight keyword inside message
-    messageElement.innerHTML = messageElement.innerHTML.replace(
-      tag,
-      `<span class="mention" style="color: gold; font-weight: bold;">${tag}</span>`
-    );
+      pingSound.currentTime = 0;
+      pingSound.play().catch(() => {});
 
-    // 🔔 If CURRENT user is mentioned → play ping
-    if (mentioned === currentUser) {
-      const ping = document.getElementById("pingSound");
-      ping.currentTime = 0;
-      ping.play();
+      messageEl.style.background = "rgba(255,255,100,0.15)";
 
-      messageElement.classList.add("mentionHighlight");
+      if (inputBox) inputBox.focus();
     }
   });
 }
