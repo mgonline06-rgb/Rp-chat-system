@@ -1,11 +1,10 @@
-// Fantasy-safe explicit and profanity filter
 export function filterBadWords(text) {
 
   const bannedWords = [
-    "fuck","shit","bitch","asshole","bastard","cunt",
-    "pussy","penis","vagina","dick","sex","slut","whore",
-    "nigger","nigga","rape","rapist","faggot","cum","anal",
-    "cock","blowjob","handjob","semen","orgy","fetish"
+    "fuck", "shit", "bitch", "asshole", "bastard", "cunt",
+    "pussy", "penis", "vagina", "dick", "sex", "slut", "whore",
+    "nigger", "nigga", "rape", "rapist", "faggot", "cum", "anal",
+    "cock", "blowjob", "handjob", "semen", "orgy", "fetish"
   ];
 
   let cleaned = text;
@@ -16,5 +15,4 @@ export function filterBadWords(text) {
   }
 
   return cleaned;
-}
 }
