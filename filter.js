@@ -1,31 +1,44 @@
 // -------------------------------------------------------
-// Swear filter
+// STRONG SWEAR FILTER (Fantasy RP Safe Mode)
+// Blocks racial slurs, homophobic slurs, profanity,
+// bypass attempts, leetspeak, spacing tricks.
 // -------------------------------------------------------
-const badWords = [
-  "fuck",
-  "shit",
-  "bitch",
-  "bastard",
-  "cunt",
-  "asshole",
-  "dick",
-  "cock",
-  "fag"
-];
 
 export function filterMessage(text) {
-  if (!text) return text;
-  let cleaned = text;
 
-  badWords.forEach(word => {
-    const pattern = new RegExp("\\b" + escapeRegExp(word) + "\\b", "gi");
-    const stars = "★".repeat(word.length);
-    cleaned = cleaned.replace(pattern, stars);
-  });
+  // List of blocked words (normalized)
+  const blockedWords = [
+    // Racial slurs
+    "nigger", "nigga", "negro",
+    "chink", "spic", "gook", "wetback",
+    "kike", "faggot", "fag", "tranny",
 
-  return cleaned;
-}
+    // Profanity
+    "fuck", "shit", "bitch", "cunt",
+    "dick", "pussy", "asshole",
 
-function escapeRegExp(str) {
-  return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    // Harassment
+    "kill yourself", "kys"
+  ];
+
+  // Normalize the text:
+  // remove punctuation, spaces, leetspeak replacements
+  let normalized = text
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, "")     // Remove symbols: ., -, _
+    .replace(/0/g, "o")
+    .replace(/1/g, "i")
+    .replace(/3/g, "e")
+    .replace(/4/g, "a")
+    .replace(/5/g, "s")
+    .replace(/7/g, "t");
+
+  // Check for blocked terms
+  for (let bad of blockedWords) {
+    if (normalized.includes(bad)) {
+      return "***[CENSORED]***";
+    }
+  }
+
+  return text;
 }
