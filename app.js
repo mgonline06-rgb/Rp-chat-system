@@ -1,21 +1,25 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+// Firebase v12 modular imports
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
+import { 
+  getDatabase, ref, push, onChildAdded 
+} from "https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js";
 
-// Firebase config
+// Your Firebase config (FIXED with databaseURL)
 const firebaseConfig = {
   apiKey: "AIzaSyDvj83bdrUn2WXrNHFz0e2HNqoWLNlgDc0",
   authDomain: "rp-system-01.firebaseapp.com",
   databaseURL: "https://rp-system-01-default-rtdb.firebaseio.com",
   projectId: "rp-system-01",
-  storageBucket: "rp-system-01.appspot.com",
+  storageBucket: "rp-system-01.firebasestorage.app",
   messagingSenderId: "594537856244",
   appId: "1:594537856244:web:8311aaed52979b647772a1"
 };
 
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// Elements
+// UI Elements
 const loginDiv = document.getElementById("login");
 const chatDiv = document.getElementById("chat");
 const joinBtn = document.getElementById("joinBtn");
@@ -35,7 +39,7 @@ let roomCode = "";
 // Avatar Upload
 avatarInput.addEventListener("change", () => {
   const file = avatarInput.files[0];
-  if(file){
+  if (file) {
     const reader = new FileReader();
     reader.onload = e => { avatarURL = e.target.result; }
     reader.readAsDataURL(file);
@@ -48,12 +52,13 @@ joinBtn.addEventListener("click", () => {
   const password = document.getElementById("password").value.trim();
   let inputRoom = roomInput.value.trim();
 
-  if(!username){ alert("Enter a username!"); return; }
-  if(password !== "1234"){ alert("Incorrect password!"); return; }
+  if (!username) { alert("Enter a username!"); return; }
+  if (password !== "1234") { alert("Incorrect password!"); return; }
 
-  if(!inputRoom){
-    roomCode = Math.random().toString(36).substring(2,8).toUpperCase();
-    alert("Room created! Share this code with friends: " + roomCode);
+  // Create or join room
+  if (!inputRoom) {
+    roomCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+    alert("Room created! Share this code: " + roomCode);
   } else {
     roomCode = inputRoom.toUpperCase();
   }
@@ -62,40 +67,42 @@ joinBtn.addEventListener("click", () => {
   loginDiv.style.display = "none";
   chatDiv.style.display = "block";
 
-  addMessage("System", `Welcome ${username}! Joined room ${roomCode}`, "");
+  addMessage("System", `Welcome ${username}!`, "");
 
-  // Listen for messages
-  const messagesRef = ref(db, 'rooms/' + roomCode + '/messages');
-  onChildAdded(messagesRef, snapshot => {
-    const data = snapshot.val();
+  // Listen for new messages in this room
+  const messagesRef = ref(db, "rooms/" + roomCode + "/messages");
+  onChildAdded(messagesRef, snap => {
+    const data = snap.val();
     addMessage(data.user, data.text, data.avatar);
   });
 });
 
-// Copy Room Code
+// Copy room code
 copyBtn.addEventListener("click", () => {
   navigator.clipboard.writeText(roomCode)
     .then(() => alert("Room code copied!"))
-    .catch(err => alert("Failed to copy: " + err));
+    .catch(err => alert("Copy failed: " + err));
 });
 
-// Send Message
+// Send message
 sendBtn.addEventListener("click", () => {
   const msg = messageInput.value.trim();
-  if(!msg) return;
+  if (!msg) return;
+
   const msgData = { user: username, text: msg, avatar: avatarURL };
-  push(ref(db, 'rooms/' + roomCode + '/messages'), msgData);
+  push(ref(db, "rooms/" + roomCode + "/messages"), msgData);
+
   messageInput.value = "";
 });
 
-// Display Messages
-function addMessage(user, text, avatar=""){
+// Display message
+function addMessage(user, text, avatar) {
   const msgEl = document.createElement("div");
   msgEl.classList.add("message");
 
   const imgEl = document.createElement("img");
   imgEl.src = avatar || "";
-  
+
   const textEl = document.createElement("span");
   textEl.textContent = `${user}: ${text}`;
 
@@ -104,6 +111,7 @@ function addMessage(user, text, avatar=""){
   messagesDiv.appendChild(msgEl);
   messagesDiv.scrollTop = messagesDiv.scrollHeight;
 }
+
 
 
 
