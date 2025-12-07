@@ -1,26 +1,18 @@
-// -------------------------------------------------------
-// Mention handling
-// -------------------------------------------------------
-export function handleMentions(msgEl, options) {
-  const { sender, text, currentUser, inputEl, openProfile } = options;
-
-  // Highlight if this message mentions the current user
-  if (currentUser && text && text.toLowerCase().includes("@" + currentUser.toLowerCase())) {
-    msgEl.classList.add("mentioned");
+export function handleMentions(msgEl, user, text, myName, inputBox) {
+  
+  if (text.includes("@"+myName)) {
+    msgEl.style.border = "2px solid gold";
+    msgEl.style.boxShadow = "0 0 10px gold";
   }
 
-  // Click: open character sheet, but Shift+click inserts mention
-  msgEl.addEventListener("click", event => {
-    if (event.shiftKey) {
-      inputEl.value = "@" + sender + " ";
-      inputEl.focus();
-      event.stopPropagation();
-      return;
-    }
-
-    // normal click - open profile
-    if (typeof openProfile === "function") {
-      openProfile();
-    }
+  msgEl.addEventListener("dblclick", () => {
+    inputBox.value = `@${user} `;
+    inputBox.focus();
   });
+}
+
+export function playPing() {
+  const audio = new Audio("ping.mp3");
+  audio.volume = 0.5;
+  audio.play().catch(()=>{});
 }
