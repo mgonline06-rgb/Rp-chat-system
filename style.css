@@ -310,3 +310,147 @@ button:hover {
   box-shadow: 0 0 10px rgba(212, 175, 55, 0.9);
 }
 
+/* ============================
+   BOOK LAYOUT FOR CHAT
+   ============================ */
+
+#chat.book {
+  max-width: 960px;
+  margin: 40px auto;
+  position: relative;
+  /* so the “book” sits on the table */
+}
+
+/* The open book itself */
+.book-inner {
+  background: #f5ecd1;
+  border-radius: 14px;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.6);
+  display: flex;
+  padding: 24px 32px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Book spine shadow */
+.book-inner::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 4px;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.15);
+  transform: translateX(-50%);
+}
+
+/* Pages */
+.page {
+  flex: 1;
+  padding: 10px 18px;
+  background: repeating-linear-gradient(
+    to bottom,
+    #fdf7e6 0,
+    #fdf7e6 24px,
+    #f5e9cb 25px
+  );
+  border-radius: 8px;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.left-page {
+  margin-right: 14px;
+}
+
+.right-page {
+  margin-left: 14px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Room header text */
+.roomTitle {
+  margin: 0 0 12px;
+  font-size: 1.4rem;
+  color: #4b2c16;
+}
+
+.roomHint {
+  margin-top: 10px;
+  font-size: 0.85rem;
+  color: #6d4a2b;
+}
+
+/* Book-style buttons */
+.bookButton {
+  background: #d9b067;
+  color: #3b2514;
+  font-weight: bold;
+  border-radius: 999px;
+  border: 1px solid #8e6a34;
+  padding: 6px 14px;
+  cursor: pointer;
+}
+
+.bookButton:hover {
+  background: #f0c881;
+}
+
+/* Messages page */
+#messages {
+  flex: 1;
+  overflow-y: auto;
+  border-radius: 6px;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.15);
+}
+
+.message {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+  padding: 6px 8px;
+  border-radius: 6px;
+}
+
+.message img {
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  margin-right: 8px;
+  border: 1px solid #c9a66a;
+}
+
+/* Input row on the right page */
+.inputRow {
+  display: flex;
+  margin-top: 10px;
+}
+
+#messageInput {
+  flex: 1;
+  margin-right: 6px;
+  border-radius: 999px;
+  border: 1px solid #c9a66a;
+  padding: 8px 10px;
+  background: #fffdf4;
+}
+
+/* ============================
+   BOOK OPENING ANIMATION
+   ============================ */
+
+.book.closed .book-inner {
+  transform-origin: left center;
+  transform: perspective(1200px) rotateY(90deg);
+  opacity: 0;
+}
+
+.book.open .book-inner {
+  transform-origin: left center;
+  transform: perspective(1200px) rotateY(0deg);
+  opacity: 1;
+  transition: transform 0.9s ease-out, opacity 0.9s ease-out;
+}
+
