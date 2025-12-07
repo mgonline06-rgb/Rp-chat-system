@@ -3,29 +3,34 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RP Chat Online</title>
+  <title>Fantasy RP Chat</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div id="login">
-    <h2>Enter your username</h2>
+    <h2>Enter your adventurer name</h2>
     <input type="text" id="username" placeholder="Username">
     <input type="password" id="password" placeholder="Password">
     <input type="file" id="avatar">
     <input type="text" id="roomCode" placeholder="Room Code (leave empty to create new)">
-    <button id="joinBtn">Join Chat</button>
+    <button id="joinBtn">Enter the Realm</button>
   </div>
 
   <div id="chat" style="display:none;">
-    <h2>Room: <span id="currentRoom"></span></h2>
+    <div id="roomHeader">
+      <h2>Room: <span id="currentRoom"></span></h2>
+      <button id="copyRoomBtn">Copy Room Code</button>
+    </div>
     <div id="messages"></div>
-    <input type="text" id="messageInput" placeholder="Type a message">
+    <input type="text" id="messageInput" placeholder="Type your message">
     <button id="sendBtn">Send</button>
   </div>
 
   <script type="module" src="app.js"></script>
 </body>
 </html>
+
+
 
 
 
