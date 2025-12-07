@@ -1,18 +1,24 @@
-export function filterBadWords(text) {
+export function censorMessage(text) {
 
   const bannedWords = [
-    "fuck", "shit", "bitch", "asshole", "bastard", "cunt",
-    "pussy", "penis", "vagina", "dick", "sex", "slut", "whore",
-    "nigger", "nigga", "rape", "rapist", "faggot", "cum", "anal",
-    "cock", "blowjob", "handjob", "semen", "orgy", "fetish"
+    // hate speech
+    "nigg", "fag", "retard", "chink", "spic", "kike",
+
+    // sexual vulgar
+    "pussy", "penis", "dick", "cock", "vagina", "cum",
+    "slut", "whore", "rape", "jerk off", "handjob",
+    "sex", "boob", "tits", "anal", "suck my",
+
+    // extreme profanity
+    "motherfucker", "cunt", "fuck", "shit"
   ];
 
-  let cleaned = text;
+  let output = text;
 
-  for (const bad of bannedWords) {
+  for (let bad of bannedWords) {
     const regex = new RegExp(bad, "gi");
-    cleaned = cleaned.replace(regex, "***[CENSORED]***");
+    output = output.replace(regex, "***[CENSORED]***");
   }
 
-  return cleaned;
+  return output;
 }
