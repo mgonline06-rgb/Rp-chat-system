@@ -1,59 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Fantasy RP Chat</title>
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-  <!-- LOGIN PANEL -->
-  <div id="login" class="panel book-panel">
-    <h1 class="title">Enter your adventurer name</h1>
 
-    <input type="text" id="username" placeholder="Username" />
-    <input type="password" id="password" placeholder="Password (1234)" />
-    <input type="file" id="avatar" />
-    <input
-      type="text"
-      id="roomCode"
-      placeholder="Room Code (leave empty to create new)"
-    />
+  <!-- LOGIN SCREEN -->
+  <div id="login">
+    <h2>Enter Your Adventurer Name</h2>
 
-    <button id="joinBtn" class="primary-btn">Enter the Realm</button>
+    <input type="text" id="username" placeholder="Username">
+    <input type="password" id="password" placeholder="Password (1234)">
+    <input type="file" id="avatar">
 
-    <p class="author-note">
-      Author’s note: this tome of whispers was compiled by <strong>Kai_teknik</strong>.
-    </p>
+    <input type="text" id="roomCode" placeholder="Room Code (leave empty to create new)">
+
+    <button id="joinBtn">Enter the Realm</button>
   </div>
 
-  <!-- CHAT PANEL -->
-  <div id="chat" class="panel book-panel" style="display: none;">
-    <div id="roomHeader" class="chat-header">
-      <div>
-        <h2>Room: <span id="currentRoom"></span></h2>
-        <p class="chat-subtitle">
-          Share this code so other adventurers may open this chapter.
-        </p>
-      </div>
-      <button id="copyRoomBtn" class="secondary-btn">Copy Room Code</button>
+  <!-- CHAT SCREEN -->
+  <div id="chat" class="closed" style="display:none;">
+    <div id="roomHeader">
+      <h2>Room: <span id="currentRoom"></span></h2>
+      <button id="copyRoomBtn">Copy Room Code</button>
     </div>
 
-    <div id="chatBody" class="chat-body">
-      <div id="messages" class="messages"></div>
-    </div>
+    <div id="messages"></div>
 
-    <div class="chat-footer">
-      <input
-        type="text"
-        id="messageInput"
-        placeholder="Speak your words..."
-      />
-      <button id="sendBtn" class="primary-btn">Send</button>
+    <div id="inputRow">
+      <input type="text" id="messageInput" placeholder="Type your message">
+      <button id="sendBtn">Send</button>
     </div>
   </div>
 
-  <!-- Main script (imports the others as ES modules) -->
-  <script type="module" src="main.js?v=1"></script>
+  <!-- Mention Ping Sound -->
+  <audio id="mentionSound" src="ping.mp3" preload="auto"></audio>
+
+  <!-- SCRIPTS -->
+  <script type="module" src="main.js?v=30"></script>
+  <!-- DO NOT load profile.js or mentions.js manually here -->
+  <!-- main.js imports them internally -->
+
 </body>
 </html>
