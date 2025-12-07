@@ -3,17 +3,12 @@
 // -------------------------------------------------------
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-app.js";
 import {
-  getDatabase,
-  ref,
-  push,
-  onChildAdded,
-  off
+  getDatabase, ref, push, onChildAdded, onDisconnect, set
 } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js";
 
-// Character sheet + mentions + swear filter
 import { openCharacterSheetFromChat } from "./profile.js";
-import { handleMentions } from "./mentions.js";
-import { filterMessage } from "./filter.js";
+import { filterBadWords } from "./wordfilter.js";
+import { handleMentions, playPing } from "./mentions.js";
 
 // -------------------------------------------------------
 // Firebase config
@@ -21,174 +16,164 @@ import { filterMessage } from "./filter.js";
 const firebaseConfig = {
   apiKey: "AIzaSyDvj83bdrUn2WXrNHFz0e2HNqoWLNlgDc0",
   authDomain: "rp-system-01.firebaseapp.com",
-  databaseURL:
-    "https://rp-system-01-default-rtdb.europe-west1.firebasedatabase.app",
+  databaseURL: "https://rp-system-01-default-rtdb.europe-west1.firebasedatabase.app",
   projectId: "rp-system-01",
   storageBucket: "rp-system-01.firebasestorage.app",
   messagingSenderId: "594537856244",
   appId: "1:594537856244:web:8311aaed52979b647772a1"
 };
 
-// -------------------------------------------------------
-// Init Firebase
-// -------------------------------------------------------
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// make available to profile.js
-window.db = db;
-
 // -------------------------------------------------------
-// UI elements
+// UI Elements
 // -------------------------------------------------------
 const loginDiv = document.getElementById("login");
 const chatDiv = document.getElementById("chat");
 const joinBtn = document.getElementById("joinBtn");
-const sendBtn = document.getElementById("sendBtn");
+
 const messagesDiv = document.getElementById("messages");
 const usernameInput = document.getElementById("username");
-const messageInput = document.getElementById("messageInput");
-const avatarInput = document.getElementById("avatar");
+const passwordInput = document.getElementById("password");
 const roomInput = document.getElementById("roomCode");
-const currentRoomSpan = document.getElementById("currentRoom");
-const copyBtn = document.getElementById("copyRoomBtn");
+const avatarInput = document.getElementById("avatar");
+const messageInput = document.getElementById("messageInput");
+const sendBtn = document.getElementById("sendBtn");
+const playerList = document.getElementById("playerList");
 
-// -------------------------------------------------------
-// Global state
-// -------------------------------------------------------
-let avatarURL = "";
 let username = "";
+let avatarURL = "";
 let roomCode = "";
 
+// Make available for profile.js
+window.db = db;
+
 // -------------------------------------------------------
-// Avatar upload
+// Avatar load
 // -------------------------------------------------------
 avatarInput.addEventListener("change", () => {
   const file = avatarInput.files[0];
   if (!file) return;
+
   const reader = new FileReader();
-  reader.onload = e => {
-    avatarURL = e.target.result;
-  };
+  reader.onload = e => avatarURL = e.target.result;
   reader.readAsDataURL(file);
 });
 
 // -------------------------------------------------------
-// Join room
+// Join Room
 // -------------------------------------------------------
 joinBtn.addEventListener("click", () => {
+
   username = usernameInput.value.trim();
-  const password = document.getElementById("password").value.trim();
+  const pass = passwordInput.value.trim();
 
-  if (!username) {
-    alert("Enter a username!");
-    return;
-  }
-  if (password !== "1234") {
-    alert("Incorrect password!");
-    return;
-  }
+  if (!username) return alert("Enter a username!");
+  if (pass !== "1234") return alert("Wrong password!");
 
-  let inputRoom = roomInput.value.trim();
+  roomCode = roomInput.value.trim() || Math.random().toString(36).substr(2,6).toUpperCase();
+  document.getElementById("currentRoom").textContent = roomCode;
 
-  if (!inputRoom) {
-    roomCode = Math.random()
-      .toString(36)
-      .substring(2, 8)
-      .toUpperCase();
-    alert("Room created! Share this code: " + roomCode);
-  } else {
-    roomCode = inputRoom.toUpperCase();
-  }
+  loginDiv.classList.add("hidden");
+  chatDiv.classList.remove("hidden");
 
-  currentRoomSpan.textContent = roomCode;
-  window.roomCode = roomCode; // for profile.js
+  window.roomCode = roomCode;
 
-  loginDiv.style.display = "none";
-  chatDiv.style.display = "block";
+  setupOnlineTracking();
+  loadMessages();
+});
 
-  // load messages for this room
-  messagesDiv.innerHTML = "";
+// -------------------------------------------------------
+// Track Who Is Online
+// -------------------------------------------------------
+function setupOnlineTracking() {
+  const userRef = ref(db, `rooms/${roomCode}/players/${username}`);
 
-  const messagesRef = ref(db, "rooms/" + roomCode + "/messages");
-  off(messagesRef); // avoid duplicate listeners
+  set(userRef, true);
+  onDisconnect(userRef).remove();
 
-  onChildAdded(messagesRef, snap => {
-    const data = snap.val();
-    addMessage(data.user, data.text, data.avatar, false);
+  onChildAdded(ref(db, `rooms/${roomCode}/players`), snap => {
+    updatePlayerList();
   });
+}
 
-  addMessage("System", `Welcome ${username}!`, "", true);
-});
+function updatePlayerList() {
+  playerList.innerHTML = "";
 
-// -------------------------------------------------------
-// Copy room code
-// -------------------------------------------------------
-copyBtn.addEventListener("click", () => {
-  if (!roomCode) return;
-  navigator.clipboard.writeText(roomCode);
-});
-
-// -------------------------------------------------------
-// Send message
-// -------------------------------------------------------
-sendBtn.addEventListener("click", sendCurrentMessage);
-messageInput.addEventListener("keydown", e => {
-  if (e.key === "Enter") {
-    e.preventDefault();
-    sendCurrentMessage();
-  }
-});
-
-function sendCurrentMessage() {
-  const raw = messageInput.value.trim();
-  if (!raw || !roomCode) return;
-
-  const text = filterMessage(raw); // apply swear filter
-
-  const msgData = {
-    user: username,
-    text,
-    avatar: avatarURL
-  };
-
-  push(ref(db, "rooms/" + roomCode + "/messages"), msgData);
-  messageInput.value = "";
+  const playersRef = ref(db, `rooms/${roomCode}/players`);
+  onChildAdded(playersRef, snap => {
+    const li = document.createElement("li");
+    li.textContent = snap.key;
+    playerList.appendChild(li);
+  });
 }
 
 // -------------------------------------------------------
-// Show a message in chat
+// Load Messages
 // -------------------------------------------------------
-function addMessage(user, text, avatar, isSystem) {
-  const msgEl = document.createElement("div");
-  msgEl.classList.add("message");
-  if (isSystem || user === "System") {
-    msgEl.classList.add("system");
-  }
+function loadMessages() {
+  const messagesRef = ref(db, `rooms/${roomCode}/messages`);
 
-  const imgEl = document.createElement("img");
-  imgEl.src = avatar || "";
-  const textEl = document.createElement("span");
-  textEl.textContent = `${user}: ${text}`;
+  onChildAdded(messagesRef, snap => {
+    const msg = snap.val();
+    addMessage(msg.user, msg.text, msg.avatar);
 
-  msgEl.append(imgEl);
-  msgEl.append(textEl);
-
-  // Mentions + click to open character sheet
-  handleMentions(msgEl, {
-    sender: user,
-    text,
-    currentUser: username,
-    inputEl: messageInput,
-    openProfile: () => {
-      openCharacterSheetFromChat({
-        user,
-        avatar,
-        rpName: user
-      });
+    if (msg.text.includes(`@${username}`)) {
+      playPing();
     }
   });
+
+  addMessage("System", `Welcome ${username}!`);
+}
+
+// -------------------------------------------------------
+// Sending Messages
+// -------------------------------------------------------
+sendBtn.addEventListener("click", () => {
+
+  let msg = messageInput.value.trim();
+  if (!msg) return;
+
+  msg = filterBadWords(msg);
+
+  const msgData = {
+    user: username,
+    text: msg,
+    avatar: avatarURL
+  };
+
+  push(ref(db, `rooms/${roomCode}/messages`), msgData);
+
+  messageInput.value = "";
+});
+
+// -------------------------------------------------------
+// Show Message in Chat
+// -------------------------------------------------------
+function addMessage(user, text, avatar) {
+
+  const msgEl = document.createElement("div");
+  msgEl.classList.add("message");
+
+  const img = document.createElement("img");
+  img.src = avatar || "";
+
+  const span = document.createElement("span");
+  span.textContent = `${user}: ${text}`;
+
+  msgEl.append(img);
+  msgEl.append(span);
+
+  // Character sheet click
+  msgEl.addEventListener("click", () => {
+    openCharacterSheetFromChat({ user, avatar, rpName: user, bio: "" });
+  });
+
+  // Mentions highlight
+  handleMentions(msgEl, user, text, username, messageInput);
 
   messagesDiv.append(msgEl);
   messagesDiv.scrollTop = messagesDiv.scrollHeight;
 }
+
