@@ -8,7 +8,7 @@ import {
 const firebaseConfig = {
   apiKey: "AIzaSyDvj83bdrUn2WXrNHFz0e2HNqoWLNlgDc0",
   authDomain: "rp-system-01.firebaseapp.com",
-  databaseURL: "https://rp-system-01-default-rtdb.firebaseio.com",
+  databaseURL: "https://rp-system-01-default-rtdb.europe-west1.firebasedatabase.app",
   projectId: "rp-system-01",
   storageBucket: "rp-system-01.firebasestorage.app",
   messagingSenderId: "594537856244",
@@ -111,3 +111,4 @@ function addMessage(user, text, avatar) {
   messagesDiv.appendChild(msgEl);
   messagesDiv.scrollTop = messagesDiv.scrollHeight;
 }
+
