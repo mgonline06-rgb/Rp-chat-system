@@ -1,14 +1,7 @@
-// -------------------------------------------------------
-// SCROLL-THEMED EDITABLE CHARACTER SHEET
-// -------------------------------------------------------
-
-import {
-  ref,
-  onChildAdded
-} from "https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js";
+import { ref, onChildAdded } from "https://www.gstatic.com/firebasejs/12.6.0/firebase-database.js";
 
 export function openCharacterSheetFromChat(player) {
-  openCharacterSheet(
+  return openCharacterSheet(
     player.user,
     player.avatar,
     player.rpName || player.user,
@@ -22,14 +15,12 @@ function openCharacterSheet(user, avatar, rpName, bio) {
 
   win.innerHTML = `
     <button class="closeProfile">✖</button>
-
     <h3>Character Sheet</h3>
 
     <div class="profileHeader">
-      <img class="profileAvatar" src="${avatar || ""}">
+      <img src="${avatar}">
       <div>
         <input class="rpNameInput" value="${rpName}" />
-        <br/>
         <small>@${user}</small>
       </div>
     </div>
@@ -37,52 +28,42 @@ function openCharacterSheet(user, avatar, rpName, bio) {
     <label>Bio:</label>
     <textarea class="bioInput">${bio}</textarea>
 
-    <button class="primary saveProfile" style="margin-top:8px;">Save</button>
+    <button class="primary saveProfile">Save</button>
 
-    <h4 style="margin-top:14px;">Message History:</h4>
-    <div class="profileMessages" id="history-${user}">
-      <i>Gathering scrolls…</i>
-    </div>
+    <h4>Message History:</h4>
+    <div class="profileMessages" id="history-${user}"><i>Gathering scrolls…</i></div>
   `;
 
-  // Close button
   win.querySelector(".closeProfile").addEventListener("click", () => win.remove());
 
-  // Save button – stored locally per browser
   win.querySelector(".saveProfile").addEventListener("click", () => {
     const newName = win.querySelector(".rpNameInput").value;
     const newBio = win.querySelector(".bioInput").value;
 
     if (!window.rpProfiles) window.rpProfiles = {};
-    window.rpProfiles[user] = {
-      rpName: newName,
-      bio: newBio
-    };
+    window.rpProfiles[user] = { rpName: newName, bio: newBio };
 
-    alert("Character sheet saved (locally on this device).");
+    alert("Character sheet saved (local only).");
   });
 
   document.body.appendChild(win);
 
   loadUserMessageHistory(user, `history-${user}`);
+
+  return win;  // return reference
 }
 
-
-
-// -------------------------------------------------------
-// LOAD USER MESSAGE HISTORY
-// -------------------------------------------------------
 function loadUserMessageHistory(targetUser, containerId) {
   const db = window.db;
-  const roomCode = window.getCurrentRoom && window.getCurrentRoom();
-  if (!db || !roomCode) return;
+  const room = window.getCurrentRoom();
+  if (!db || !room) return;
 
   const container = document.getElementById(containerId);
   container.innerHTML = "";
 
-  const messagesRef = ref(db, "rooms/" + roomCode + "/messages");
+  const msgRef = ref(db, "rooms/" + room + "/messages");
 
-  onChildAdded(messagesRef, snap => {
+  onChildAdded(msgRef, snap => {
     const msg = snap.val();
     if (msg.user === targetUser) {
       const p = document.createElement("p");
